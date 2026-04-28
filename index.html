@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#121212" />
+    <title>Bar Kasse</title>
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="apple-touch-icon" href="icon.svg" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Bar Kasse</p>
+          <h1>Bestellung</h1>
+        </div>
+        <div class="top-actions">
+          <button class="top-action" id="openStats" type="button">Statistik</button>
+          <button class="top-action" id="openSettings" type="button" aria-label="Einstellungen">⚙</button>
+          <div class="clock" id="clock">--:--</div>
+        </div>
+      </header>
+
+      <main class="workspace">
+        <section class="menu-area" aria-label="Getraenkekarte">
+          <div class="category-tabs" id="categoryTabs" role="tablist" aria-label="Kategorien"></div>
+          <div class="drink-grid" id="drinkGrid" aria-live="polite"></div>
+        </section>
+
+        <aside class="order-panel" aria-label="Aktuelle Bestellung">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">Aktuell</p>
+              <h2>Warenkorb</h2>
+            </div>
+            <button class="icon-button danger" id="clearOrder" type="button" title="Bestellung leeren" aria-label="Bestellung leeren">
+              <span aria-hidden="true">×</span>
+            </button>
+          </div>
+
+          <section class="shift-card" id="shiftCard" aria-live="polite">
+            <div>
+              <p class="eyebrow">Schicht</p>
+              <h3 id="shiftName">Keine Schicht aktiv</h3>
+            </div>
+            <div class="shift-details" id="shiftDetails"></div>
+          </section>
+
+          <div class="order-list" id="orderList"></div>
+
+          <div class="order-summary">
+            <div class="summary-row">
+              <span>Artikel</span>
+              <strong id="itemCount">0</strong>
+            </div>
+            <div class="summary-row total">
+              <span>Summe</span>
+              <strong id="orderTotal">0,00 €</strong>
+            </div>
+          </div>
+
+          <div class="payment-actions">
+            <button class="pay-button card" id="payCard" type="button">Mit Karte bezahlt</button>
+            <button class="pay-button cash" id="openCash" type="button">Bar kassieren</button>
+          </div>
+
+          <div class="last-sale" id="lastSale" hidden></div>
+        </aside>
+      </main>
+    </div>
+
+    <dialog class="recipe-dialog" id="recipeDialog">
+      <div class="dialog-card">
+        <button class="icon-button close-dialog" id="closeRecipe" type="button" title="Schließen" aria-label="Schließen">
+          <span aria-hidden="true">×</span>
+        </button>
+        <div class="recipe-header">
+          <div class="recipe-image" id="recipeImage" aria-hidden="true"></div>
+          <div>
+            <p class="eyebrow" id="recipePrice"></p>
+            <h2 id="recipeTitle"></h2>
+          </div>
+        </div>
+        <div class="recipe-content">
+          <section>
+            <h3>Zutaten</h3>
+            <ul id="recipeIngredients"></ul>
+          </section>
+          <section>
+            <h3>Zubereitung</h3>
+            <ol id="recipeSteps"></ol>
+          </section>
+        </div>
+      </div>
+    </dialog>
+
+    <dialog class="cash-dialog" id="cashDialog">
+      <div class="dialog-card cash-card">
+        <button class="icon-button close-dialog" id="closeCash" type="button" title="Schließen" aria-label="Schließen">
+          <span aria-hidden="true">×</span>
+        </button>
+        <div class="cash-header">
+          <div>
+            <p class="eyebrow">Barzahlung</p>
+            <h2>Geld erhalten</h2>
+          </div>
+          <div class="cash-total">
+            <span>Zu zahlen</span>
+            <strong id="cashDue">0,00 €</strong>
+          </div>
+        </div>
+
+        <div class="cash-received">
+          <div>
+            <span>Erhalten</span>
+            <strong id="cashReceived">0,00 €</strong>
+          </div>
+          <div>
+            <span>Rückgeld</span>
+            <strong id="cashChange">0,00 €</strong>
+          </div>
+        </div>
+
+        <div class="denomination-grid" id="denominationGrid"></div>
+
+        <div class="cash-actions">
+          <button class="secondary-button" id="resetCash" type="button">Bargeld zurücksetzen</button>
+          <button class="pay-button cash" id="finishCash" type="button" disabled>Bar bezahlt</button>
+        </div>
+      </div>
+    </dialog>
+
+    <dialog class="stats-dialog" id="statsDialog">
+      <div class="dialog-card wide-card">
+        <button class="icon-button close-dialog" id="closeStats" type="button" title="Schließen" aria-label="Schließen">
+          <span aria-hidden="true">×</span>
+        </button>
+        <div class="stats-header">
+          <div>
+            <p class="eyebrow">Auswertung</p>
+            <h2>Verkäufe</h2>
+          </div>
+          <button class="pay-button card compact" id="downloadCsv" type="button">CSV herunterladen</button>
+        </div>
+
+        <div class="stats-kpis">
+          <div>
+            <span>Umsatz</span>
+            <strong id="statsRevenue">0,00 €</strong>
+          </div>
+          <div>
+            <span>Getränke</span>
+            <strong id="statsItems">0</strong>
+          </div>
+          <div>
+            <span>Bestellungen</span>
+            <strong id="statsOrders">0</strong>
+          </div>
+        </div>
+
+        <div class="stats-table-wrap">
+          <table class="stats-table">
+            <thead>
+              <tr>
+                <th>Produkt</th>
+                <th>Kategorie</th>
+                <th>Anzahl</th>
+                <th>Umsatz</th>
+              </tr>
+            </thead>
+            <tbody id="statsRows"></tbody>
+          </table>
+        </div>
+      </div>
+    </dialog>
+
+    <dialog class="settings-dialog" id="settingsDialog">
+      <div class="dialog-card wide-card settings-card">
+        <button class="icon-button close-dialog" id="closeSettings" type="button" title="Schließen" aria-label="Schließen">
+          <span aria-hidden="true">×</span>
+        </button>
+        <div class="stats-header">
+          <div>
+            <p class="eyebrow">Pflege</p>
+            <h2>Einstellungen</h2>
+          </div>
+          <div class="header-actions">
+            <button class="secondary-button compact" id="resetDemoData" type="button">Demo zurücksetzen</button>
+            <button class="secondary-button compact danger-soft" id="clearSales" type="button">Verkaufsdaten leeren</button>
+          </div>
+        </div>
+
+        <div class="settings-layout">
+          <section class="settings-section">
+            <div class="section-heading">
+              <h3>Kategorien</h3>
+              <button class="secondary-button compact" id="addCategory" type="button">Kategorie anlegen</button>
+            </div>
+            <div class="edit-list" id="categoryEditor"></div>
+          </section>
+
+          <section class="settings-section">
+            <div class="section-heading">
+              <h3>Produkte</h3>
+              <button class="secondary-button compact" id="addDrink" type="button">Produkt anlegen</button>
+            </div>
+            <div class="edit-list" id="drinkEditor"></div>
+          </section>
+
+          <section class="settings-section shifts-section">
+            <div class="section-heading">
+              <h3>Schichten</h3>
+              <button class="secondary-button compact" id="addShift" type="button">Schicht anlegen</button>
+            </div>
+            <div class="edit-list" id="shiftEditor"></div>
+          </section>
+        </div>
+      </div>
+    </dialog>
+
+    <dialog class="stop-dialog" id="stopDialog">
+      <div class="dialog-card stop-card">
+        <button class="icon-button close-dialog" id="closeStop" type="button" title="Schließen" aria-label="Schließen">
+          <span aria-hidden="true">×</span>
+        </button>
+        <p class="eyebrow">Ausschankstopp</p>
+        <h2>In 30 Minuten ist Ausschankstopp.</h2>
+        <p id="stopMessage">Bitte letzte Bestellungen rechtzeitig ansagen.</p>
+        <button class="pay-button cash" id="ackStop" type="button">Verstanden</button>
+      </div>
+    </dialog>
+
+    <script src="app.js?v=5"></script>
+  </body>
+</html>

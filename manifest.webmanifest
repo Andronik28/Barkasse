@@ -1,0 +1,17 @@
+{
+  "name": "Bar Kasse",
+  "short_name": "Bar Kasse",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f5f1e9",
+  "theme_color": "#121212",
+  "description": "Eine einfache iPad-Kasse fuer Bars mit Rezepten, Karten- und Barzahlung.",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
