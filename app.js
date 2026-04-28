@@ -211,7 +211,7 @@ function renderCategories() {
     tab.type = "button";
     tab.role = "tab";
     tab.setAttribute("aria-selected", String(category.id === activeCategory));
-    tab.innerHTML = `<span aria-hidden="true">${category.icon}</span><span>${category.label}</span>`;
+    tab.textContent = category.label;
     tab.addEventListener("click", () => {
       activeCategory = category.id;
       renderCategories();
