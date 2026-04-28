@@ -58,6 +58,7 @@ button {
   align-items: center;
   display: flex;
   gap: 10px;
+  min-width: 0;
 }
 
 .top-action {
@@ -258,7 +259,7 @@ h4 {
   box-shadow: var(--shadow);
   display: grid;
   gap: 14px;
-  grid-template-rows: auto auto 1fr auto auto auto;
+  grid-template-rows: auto 1fr auto auto auto;
   padding: 18px;
 }
 
@@ -323,6 +324,14 @@ h4 {
   padding: 14px;
 }
 
+.compact-shift {
+  align-items: center;
+  grid-template-columns: auto auto;
+  min-height: 58px;
+  min-width: 260px;
+  padding: 10px 14px;
+}
+
 .shift-card .eyebrow {
   color: rgba(255, 253, 248, 0.7);
 }
@@ -331,6 +340,11 @@ h4 {
   font-size: 1.25rem;
   line-height: 1.1;
   margin-bottom: 0;
+}
+
+.compact-shift h3 {
+  font-size: 1rem;
+  white-space: nowrap;
 }
 
 .shift-card.warning {
@@ -349,9 +363,19 @@ h4 {
   font-weight: 800;
 }
 
+.compact-shift .shift-details {
+  gap: 3px;
+  justify-items: end;
+  text-align: right;
+}
+
 .shift-details span {
   display: block;
   opacity: 0.86;
+}
+
+.compact-shift .shift-details span:not(:first-child) {
+  display: none;
 }
 
 .full-grid {
@@ -859,12 +883,26 @@ dialog::backdrop {
   }
 
   .top-actions {
+    align-items: stretch;
+    display: grid;
+    grid-template-columns: minmax(150px, 1fr) auto auto auto;
     width: 100%;
   }
 
   .top-action {
-    flex: 1;
     justify-content: center;
+  }
+
+  .compact-shift {
+    min-width: 0;
+  }
+
+  .compact-shift .shift-details {
+    display: none;
+  }
+
+  .compact-shift h3 {
+    white-space: normal;
   }
 
   .clock {

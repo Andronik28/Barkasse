@@ -7,7 +7,7 @@
     <title>Bar Kasse</title>
     <link rel="manifest" href="manifest.webmanifest" />
     <link rel="apple-touch-icon" href="icon.svg" />
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="styles.css?v=10" />
   </head>
   <body>
     <div class="app-shell">
@@ -17,6 +17,13 @@
           <h1>Bestellung</h1>
         </div>
         <div class="top-actions">
+          <section class="shift-card compact-shift" id="shiftCard" aria-live="polite">
+            <div>
+              <p class="eyebrow">Schicht</p>
+              <h3 id="shiftName">Keine Schicht aktiv</h3>
+            </div>
+            <div class="shift-details" id="shiftDetails"></div>
+          </section>
           <button class="top-action" id="openStats" type="button">Statistik</button>
           <button class="top-action" id="openSettings" type="button" aria-label="Einstellungen">⚙</button>
           <div class="clock" id="clock">--:--</div>
@@ -39,14 +46,6 @@
               <span aria-hidden="true">×</span>
             </button>
           </div>
-
-          <section class="shift-card" id="shiftCard" aria-live="polite">
-            <div>
-              <p class="eyebrow">Schicht</p>
-              <h3 id="shiftName">Keine Schicht aktiv</h3>
-            </div>
-            <div class="shift-details" id="shiftDetails"></div>
-          </section>
 
           <div class="order-list" id="orderList"></div>
 
@@ -255,6 +254,6 @@
       </div>
     </dialog>
 
-    <script src="app.js?v=6"></script>
+    <script src="app.js?v=10"></script>
   </body>
 </html>

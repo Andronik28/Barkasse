@@ -434,7 +434,9 @@ function renderShiftStatus() {
 
   if (!current) {
     name.textContent = "Keine Schicht aktiv";
-    details.innerHTML = `<span>In den Einstellungen kannst du Schichten anlegen.</span>`;
+    details.innerHTML = card.classList.contains("compact-shift")
+      ? `<span>Keine aktive Schicht</span>`
+      : `<span>In den Einstellungen kannst du Schichten anlegen.</span>`;
     return;
   }
 
@@ -443,12 +445,17 @@ function renderShiftStatus() {
   const untilEnd = minutesUntil(current.endsAt, now);
   const people = current.shift.people?.length ? current.shift.people.join(", ") : "Noch niemand eingeteilt";
   name.textContent = current.shift.name || "Aktive Schicht";
-  details.innerHTML = `
-    <span>${timeText(current.startsAt)} bis ${timeText(current.endsAt)}</span>
-    <span>Ausschankstopp: ${timeText(current.stopAt)}</span>
-    <span>${people}</span>
-    <span>${untilStop > 0 ? `${untilStop} Min. bis Stopp` : `Ausschankstopp erreicht`} · ${untilEnd} Min. bis Schichtende</span>
-  `;
+  details.innerHTML = card.classList.contains("compact-shift")
+    ? `
+      <span>${timeText(current.startsAt)} bis ${timeText(current.endsAt)}</span>
+      <span>Stopp ${timeText(current.stopAt)}</span>
+    `
+    : `
+      <span>${timeText(current.startsAt)} bis ${timeText(current.endsAt)}</span>
+      <span>Ausschankstopp: ${timeText(current.stopAt)}</span>
+      <span>${people}</span>
+      <span>${untilStop > 0 ? `${untilStop} Min. bis Stopp` : `Ausschankstopp erreicht`} · ${untilEnd} Min. bis Schichtende</span>
+    `;
 
   if (untilStop <= 0) {
     card.classList.add("stop");
