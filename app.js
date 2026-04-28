@@ -314,6 +314,11 @@ function addDrink(id) {
 
 function changeQuantity(id, delta) {
   const existing = order.get(id);
+  if (!existing && id === depositProduct.id && delta > 0) {
+    order.set(depositProduct.id, { drink: depositProduct, quantity: delta });
+    renderOrder();
+    return;
+  }
   if (!existing) return;
   const next = existing.quantity + delta;
   if (next <= 0) {
@@ -321,21 +326,7 @@ function changeQuantity(id, delta) {
   } else {
     order.set(id, { ...existing, quantity: next });
   }
-  if (id !== depositProduct.id) {
-    syncDepositForOrder();
-  }
   renderOrder();
-}
-
-function syncDepositForOrder() {
-  const drinkCount = [...order.values()]
-    .filter((line) => line.drink.id !== depositProduct.id)
-    .reduce((sum, line) => sum + line.quantity, 0);
-  if (drinkCount > 0) {
-    order.set(depositProduct.id, { drink: depositProduct, quantity: drinkCount });
-  } else {
-    order.delete(depositProduct.id);
-  }
 }
 
 function renderOrder() {
@@ -355,20 +346,18 @@ function renderOrder() {
       item.className = `order-item${isDeposit ? " deposit-line" : ""}`;
       item.innerHTML = `
         <div class="quantity-stepper">
-          ${isDeposit ? "" : `<button class="stepper-button" type="button" aria-label="${drink.name} entfernen">−</button>
-          <button class="stepper-button" type="button" aria-label="${drink.name} hinzufügen">+</button>`}
+          <button class="stepper-button" type="button" aria-label="${drink.name} entfernen">−</button>
+          <button class="stepper-button" type="button" aria-label="${drink.name} hinzufügen">+</button>
         </div>
         <div>
           <div class="order-name">${quantity} × ${drink.name}</div>
-          <span class="order-sub">${isDeposit ? "Automatisch je Getränk" : `${money(drink.price)} pro Stück`}</span>
+          <span class="order-sub">${isDeposit ? "Automatisch, manuell korrigierbar" : `${money(drink.price)} pro Stück`}</span>
         </div>
         <div class="order-line-total">${money(drink.price * quantity)}</div>
       `;
-      if (!isDeposit) {
-        const [minus, plus] = item.querySelectorAll(".stepper-button");
-        minus.addEventListener("click", () => changeQuantity(drink.id, -1));
-        plus.addEventListener("click", () => changeQuantity(drink.id, 1));
-      }
+      const [minus, plus] = item.querySelectorAll(".stepper-button");
+      minus.addEventListener("click", () => changeQuantity(drink.id, -1));
+      plus.addEventListener("click", () => changeQuantity(drink.id, 1));
       orderList.append(item);
     });
   }
