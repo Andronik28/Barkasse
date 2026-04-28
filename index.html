@@ -7,7 +7,7 @@
     <title>Bar Kasse</title>
     <link rel="manifest" href="manifest.webmanifest" />
     <link rel="apple-touch-icon" href="icon.svg" />
-    <link rel="stylesheet" href="styles.css?v=15" />
+    <link rel="stylesheet" href="styles.css?v=16" />
   </head>
   <body>
     <div class="app-shell">
@@ -34,6 +34,14 @@
       </header>
 
       <main class="workspace">
+        <aside class="popular-panel" aria-label="Beliebte Produkte">
+          <div class="popular-heading">
+            <p class="eyebrow">Schnellzugriff</p>
+            <h2>Beliebt</h2>
+          </div>
+          <div class="popular-list" id="popularList"></div>
+        </aside>
+
         <section class="menu-area" aria-label="Getraenkekarte">
           <div class="category-tabs" id="categoryTabs" role="tablist" aria-label="Kategorien"></div>
           <div class="drink-grid" id="drinkGrid" aria-live="polite"></div>
@@ -284,6 +292,6 @@
       </div>
     </dialog>
 
-    <script src="app.js?v=15"></script>
+    <script src="app.js?v=16"></script>
   </body>
 </html>

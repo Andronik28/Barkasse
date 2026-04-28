@@ -71,6 +71,7 @@ const byId = (id) => document.getElementById(id);
 
 const categoryTabs = byId("categoryTabs");
 const drinkGrid = byId("drinkGrid");
+const popularList = byId("popularList");
 const orderList = byId("orderList");
 const itemCount = byId("itemCount");
 const orderTotal = byId("orderTotal");
@@ -233,37 +234,65 @@ function renderDrinks() {
   }
 
   drinks.forEach((drink) => {
-    const card = document.createElement("div");
-    card.className = "drink-card";
-    card.role = "button";
-    card.tabIndex = 0;
-    card.setAttribute("aria-label", `${drink.name} fuer ${money(drink.price)} hinzufuegen`);
-    card.style.setProperty("--drink-a", drink.colors?.[0] || "#9aa6a1");
-    card.style.setProperty("--drink-b", drink.colors?.[1] || "#f4e9d7");
-    card.innerHTML = `
-      ${drinkImageMarkup(drink, "drink-art")}
-      <div class="drink-meta">
-        <div>
-          <span class="drink-name">${drink.name}</span>
-          <button class="recipe-button" type="button">Rezept ansehen</button>
-        </div>
-        <span class="drink-price">${money(drink.price)}</span>
+    drinkGrid.append(createDrinkCard(drink));
+  });
+}
+
+function createDrinkCard(drink, options = {}) {
+  const card = document.createElement("div");
+  card.className = `drink-card${options.compact ? " compact-drink-card" : ""}`;
+  card.role = "button";
+  card.tabIndex = 0;
+  card.setAttribute("aria-label", `${drink.name} fuer ${money(drink.price)} hinzufuegen`);
+  card.style.setProperty("--drink-a", drink.colors?.[0] || "#9aa6a1");
+  card.style.setProperty("--drink-b", drink.colors?.[1] || "#f4e9d7");
+  card.innerHTML = `
+    ${drinkImageMarkup(drink, "drink-art")}
+    <div class="drink-meta">
+      <div>
+        <span class="drink-name">${drink.name}</span>
+        ${options.compact ? "" : `<button class="recipe-button" type="button">Rezept ansehen</button>`}
       </div>
-    `;
-    card.addEventListener("click", () => addDrink(drink.id));
-    card.addEventListener("keydown", (event) => {
-      if (event.target !== card) return;
-      if (event.key === "Enter" || event.key === " ") {
-        event.preventDefault();
-        addDrink(drink.id);
-      }
-    });
-    card.querySelector(".recipe-button").addEventListener("click", (event) => {
+      <span class="drink-price">${money(drink.price)}</span>
+    </div>
+  `;
+  card.addEventListener("click", () => addDrink(drink.id));
+  card.addEventListener("keydown", (event) => {
+    if (event.target !== card) return;
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      addDrink(drink.id);
+    }
+  });
+  const recipeButton = card.querySelector(".recipe-button");
+  if (recipeButton) {
+    recipeButton.addEventListener("click", (event) => {
       event.stopPropagation();
       showRecipe(drink);
     });
-    drinkGrid.append(card);
+  }
+  return card;
+}
+
+function renderPopular() {
+  const sold = new Map();
+  sales.forEach((sale) => {
+    sale.items.forEach((line) => {
+      if (line.categoryId === "pfand") return;
+      sold.set(line.productId, (sold.get(line.productId) || 0) + line.quantity);
+    });
   });
+  const fallback = ["aperol-spritz", "prosecco", "wodka-bull"];
+  const popularIds = [...sold.entries()]
+    .sort((a, b) => b[1] - a[1])
+    .map(([id]) => id);
+  const ids = [...new Set([...popularIds, ...fallback])]
+    .map((id) => catalog.drinks.find((drink) => drink.id === id))
+    .filter(Boolean)
+    .slice(0, 3);
+
+  popularList.innerHTML = "";
+  ids.forEach((drink) => popularList.append(createDrinkCard(drink, { compact: true })));
 }
 
 function renderDepositCategory() {
@@ -885,6 +914,7 @@ function showSettingsTab(tabName) {
 function renderAll() {
   renderCategories();
   renderDrinks();
+  renderPopular();
   renderOrder();
   renderStats();
   renderShiftStatus();
