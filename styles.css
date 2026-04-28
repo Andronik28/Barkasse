@@ -1,17 +1,17 @@
 :root {
   color-scheme: light;
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --bg: #f5f1e9;
-  --surface: #fffdf8;
-  --ink: #181818;
-  --muted: #756e64;
-  --line: #ddd4c6;
-  --accent: #0f766e;
-  --accent-strong: #0b5f59;
-  --warm: #b3452e;
+  --bg: #f6f8fc;
+  --surface: #ffffff;
+  --ink: #10243a;
+  --muted: #637083;
+  --line: #d6dfec;
+  --accent: #153c76;
+  --accent-strong: #0b2d61;
+  --warm: #bf1e2e;
   --gold: #d9952f;
   --green: #167044;
-  --shadow: 0 20px 50px rgba(30, 24, 18, 0.14);
+  --shadow: 0 20px 50px rgba(13, 42, 82, 0.14);
 }
 
 * {
@@ -26,8 +26,8 @@ body {
 body {
   margin: 0;
   background:
-    linear-gradient(135deg, rgba(15, 118, 110, 0.08), transparent 34%),
-    linear-gradient(315deg, rgba(179, 69, 46, 0.1), transparent 36%),
+    linear-gradient(135deg, rgba(21, 60, 118, 0.1), transparent 34%),
+    linear-gradient(315deg, rgba(191, 30, 46, 0.08), transparent 36%),
     var(--bg);
   color: var(--ink);
   overflow: hidden;
@@ -54,6 +54,23 @@ button {
   min-height: 72px;
 }
 
+.brand-lockup {
+  align-items: center;
+  display: flex;
+  gap: 14px;
+  min-width: 0;
+}
+
+.club-logo {
+  background: var(--accent);
+  border-radius: 8px;
+  box-shadow: 0 10px 24px rgba(21, 60, 118, 0.14);
+  height: 50px;
+  object-fit: contain;
+  padding: 6px 10px;
+  width: 158px;
+}
+
 .top-actions {
   align-items: center;
   display: flex;
@@ -63,7 +80,7 @@ button {
 
 .top-action {
   align-items: center;
-  background: rgba(255, 253, 248, 0.9);
+  background: rgba(255, 255, 255, 0.92);
   border: 0;
   border-radius: 8px;
   cursor: pointer;
@@ -71,7 +88,7 @@ button {
   font-size: 1rem;
   font-weight: 900;
   min-height: 58px;
-  padding: 0 18px;
+  padding: 0 16px;
 }
 
 .eyebrow {
@@ -91,7 +108,7 @@ p {
 }
 
 h1 {
-  font-size: clamp(2rem, 4vw, 3.8rem);
+  font-size: clamp(1.8rem, 3.4vw, 3.2rem);
   line-height: 0.95;
   margin-bottom: 0;
 }
@@ -113,7 +130,7 @@ h4 {
 
 .clock {
   align-items: center;
-  background: #181818;
+  background: var(--accent-strong);
   border-radius: 8px;
   color: #fffdf8;
   display: flex;
@@ -121,8 +138,20 @@ h4 {
   font-weight: 800;
   height: 58px;
   justify-content: center;
-  min-width: 128px;
-  padding: 0 18px;
+  min-width: 112px;
+  padding: 0 14px;
+}
+
+.clock-colon {
+  animation: blink-colon 1s steps(1) infinite;
+  display: inline-block;
+  padding: 0 1px;
+}
+
+@keyframes blink-colon {
+  50% {
+    opacity: 0.12;
+  }
 }
 
 .workspace {
@@ -165,7 +194,7 @@ h4 {
 }
 
 .category-tab[aria-selected="true"] {
-  background: #181818;
+  background: var(--accent);
   color: #fffdf8;
 }
 
@@ -231,7 +260,7 @@ h4 {
 }
 
 .drink-price {
-  background: #181818;
+  background: var(--accent-strong);
   border-radius: 7px;
   color: #fffdf8;
   font-size: 1.05rem;
@@ -316,9 +345,10 @@ h4 {
 }
 
 .shift-card {
-  background: #181818;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid var(--line);
   border-radius: 8px;
-  color: #fffdf8;
+  color: var(--ink);
   display: grid;
   gap: 10px;
   padding: 14px;
@@ -328,33 +358,34 @@ h4 {
   align-items: center;
   grid-template-columns: auto auto;
   min-height: 58px;
-  min-width: 260px;
-  padding: 10px 14px;
+  min-width: 280px;
+  padding: 8px 12px;
 }
 
 .shift-card .eyebrow {
-  color: rgba(255, 253, 248, 0.7);
+  color: var(--muted);
 }
 
 .shift-card h3 {
-  font-size: 1.25rem;
+  font-size: 1.1rem;
   line-height: 1.1;
   margin-bottom: 0;
 }
 
 .compact-shift h3 {
-  font-size: 1rem;
+  font-size: 0.95rem;
   white-space: nowrap;
 }
 
 .shift-card.warning {
-  background: var(--gold);
+  background: #fff4d3;
   color: #181818;
 }
 
 .shift-card.stop {
-  background: var(--warm);
-  color: #fffdf8;
+  background: #fff0f2;
+  border-color: rgba(191, 30, 46, 0.35);
+  color: #7c1720;
 }
 
 .shift-details {
@@ -367,15 +398,12 @@ h4 {
   gap: 3px;
   justify-items: end;
   text-align: right;
+  font-size: 0.85rem;
 }
 
 .shift-details span {
   display: block;
   opacity: 0.86;
-}
-
-.compact-shift .shift-details span:not(:first-child) {
-  display: none;
 }
 
 .full-grid {
@@ -384,7 +412,7 @@ h4 {
 
 .order-item {
   align-items: center;
-  background: #f7efe3;
+  background: #f7f9fd;
   border-radius: 8px;
   display: grid;
   gap: 10px;
@@ -400,7 +428,7 @@ h4 {
 
 .stepper-button {
   align-items: center;
-  background: #181818;
+  background: var(--accent-strong);
   border: 0;
   border-radius: 7px;
   color: #fffdf8;
@@ -594,7 +622,7 @@ dialog::backdrop {
 }
 
 .stats-kpis > div {
-  background: #f7efe3;
+  background: #f7f9fd;
   border-radius: 8px;
   display: grid;
   gap: 6px;
@@ -632,7 +660,7 @@ dialog::backdrop {
 }
 
 .stats-table th {
-  background: #181818;
+  background: var(--accent-strong);
   color: #fffdf8;
   font-size: 0.82rem;
   text-transform: uppercase;
@@ -645,8 +673,34 @@ dialog::backdrop {
 
 .settings-layout {
   display: grid;
-  gap: 18px;
+  gap: 0;
   grid-template-columns: 1fr;
+}
+
+.settings-tabs {
+  background: #eef3fb;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  display: grid;
+  gap: 6px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  padding: 6px;
+}
+
+.settings-tab {
+  background: transparent;
+  border: 0;
+  border-radius: 7px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 900;
+  min-height: 46px;
+  padding: 10px;
+}
+
+.settings-tab[aria-selected="true"] {
+  background: var(--accent);
+  color: #fff;
 }
 
 .settings-titlebar {
@@ -655,12 +709,16 @@ dialog::backdrop {
 }
 
 .settings-block {
-  background: #fff8ec;
+  background: #ffffff;
   border: 1px solid var(--line);
   border-radius: 8px;
   display: grid;
   gap: 14px;
-  padding: 16px;
+  padding: 18px;
+}
+
+.settings-panel[hidden] {
+  display: none;
 }
 
 .settings-block-heading {
@@ -669,7 +727,7 @@ dialog::backdrop {
   display: flex;
   gap: 14px;
   justify-content: space-between;
-  padding-bottom: 12px;
+  padding-bottom: 14px;
 }
 
 .settings-block-heading h3 {
@@ -691,19 +749,23 @@ dialog::backdrop {
 
 .edit-list {
   display: grid;
-  gap: 10px;
-  max-height: 52vh;
+  gap: 14px;
+  max-height: 58vh;
   overflow: auto;
   padding-right: 4px;
 }
 
+.relaxed-list {
+  gap: 18px;
+}
+
 .edit-card {
-  background: #f7efe3;
+  background: #f7f9fd;
   border: 1px solid rgba(24, 24, 24, 0.06);
   border-radius: 8px;
   display: grid;
-  gap: 10px;
-  padding: 12px;
+  gap: 14px;
+  padding: 16px;
 }
 
 .product-edit {
@@ -764,7 +826,7 @@ dialog::backdrop {
 .edit-actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 10px;
 }
 
 .maintenance-actions {
@@ -774,7 +836,7 @@ dialog::backdrop {
 }
 
 .cash-total {
-  background: #181818;
+  background: var(--accent-strong);
   border-radius: 8px;
   color: #fffdf8;
   display: grid;
@@ -804,7 +866,7 @@ dialog::backdrop {
 }
 
 .cash-received > div {
-  background: #f7efe3;
+  background: #f7f9fd;
   border-radius: 8px;
   display: grid;
   gap: 4px;
@@ -822,8 +884,8 @@ dialog::backdrop {
 }
 
 .denomination-button {
-  background: #fff8ec;
-  border: 2px solid #dfd2bf;
+  background: #ffffff;
+  border: 2px solid var(--line);
   border-radius: 8px;
   cursor: pointer;
   display: grid;
@@ -868,6 +930,17 @@ dialog::backdrop {
 }
 
 @media (max-width: 720px) {
+  .brand-lockup {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .club-logo {
+    height: auto;
+    width: min(240px, 70vw);
+  }
+
   .category-tabs {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -903,6 +976,10 @@ dialog::backdrop {
 
   .compact-shift h3 {
     white-space: normal;
+  }
+
+  .settings-tabs {
+    grid-template-columns: repeat(2, 1fr);
   }
 
   .clock {

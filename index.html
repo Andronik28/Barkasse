@@ -7,14 +7,17 @@
     <title>Bar Kasse</title>
     <link rel="manifest" href="manifest.webmanifest" />
     <link rel="apple-touch-icon" href="icon.svg" />
-    <link rel="stylesheet" href="styles.css?v=11" />
+    <link rel="stylesheet" href="styles.css?v=12" />
   </head>
   <body>
     <div class="app-shell">
       <header class="topbar">
-        <div>
-          <p class="eyebrow">Bar Kasse</p>
-          <h1>Bestellung</h1>
+        <div class="brand-lockup">
+          <img class="club-logo" src="assets/burgfunken_logo.png" alt="Burgfunken Neuburg" />
+          <div>
+            <p class="eyebrow">Burgfunken Neuburg</p>
+            <h1>Bar Kasse</h1>
+          </div>
         </div>
         <div class="top-actions">
           <section class="shift-card compact-shift" id="shiftCard" aria-live="polite">
@@ -187,35 +190,37 @@
           </div>
         </div>
 
+        <div class="settings-tabs" role="tablist" aria-label="Einstellungsbereiche">
+          <button class="settings-tab" data-settings-tab="categories" type="button" role="tab" aria-selected="true">Kategorien</button>
+          <button class="settings-tab" data-settings-tab="products" type="button" role="tab" aria-selected="false">Produkte</button>
+          <button class="settings-tab" data-settings-tab="shifts" type="button" role="tab" aria-selected="false">Schicht</button>
+          <button class="settings-tab" data-settings-tab="system" type="button" role="tab" aria-selected="false">System</button>
+        </div>
+
         <div class="settings-layout">
-          <section class="settings-block catalog-block">
+          <section class="settings-block settings-panel" data-settings-panel="categories">
             <div class="settings-block-heading">
               <div>
                 <p class="eyebrow">Sortiment</p>
-                <h3>Kategorien & Produkte</h3>
+                <h3>Kategorien</h3>
               </div>
+              <button class="secondary-button compact" id="addCategory" type="button">Kategorie anlegen</button>
             </div>
-
-            <div class="settings-columns">
-              <section class="settings-section">
-                <div class="section-heading">
-                  <h4>Kategorien</h4>
-                  <button class="secondary-button compact" id="addCategory" type="button">Kategorie anlegen</button>
-                </div>
-                <div class="edit-list" id="categoryEditor"></div>
-              </section>
-
-              <section class="settings-section">
-                <div class="section-heading">
-                  <h4>Produkte</h4>
-                  <button class="secondary-button compact" id="addDrink" type="button">Produkt anlegen</button>
-                </div>
-                <div class="edit-list" id="drinkEditor"></div>
-              </section>
-            </div>
+            <div class="edit-list" id="categoryEditor"></div>
           </section>
 
-          <section class="settings-block">
+          <section class="settings-block settings-panel" data-settings-panel="products" hidden>
+            <div class="settings-block-heading">
+              <div>
+                <p class="eyebrow">Sortiment</p>
+                <h3>Produkte</h3>
+              </div>
+              <button class="secondary-button compact" id="addDrink" type="button">Produkt anlegen</button>
+            </div>
+            <div class="edit-list relaxed-list" id="drinkEditor"></div>
+          </section>
+
+          <section class="settings-block settings-panel" data-settings-panel="shifts" hidden>
             <div class="settings-block-heading">
               <div>
                 <p class="eyebrow">Team</p>
@@ -226,7 +231,7 @@
             <div class="edit-list" id="shiftEditor"></div>
           </section>
 
-          <section class="settings-block">
+          <section class="settings-block settings-panel" data-settings-panel="system" hidden>
             <div class="settings-block-heading">
               <div>
                 <p class="eyebrow">System</p>
@@ -254,6 +259,6 @@
       </div>
     </dialog>
 
-    <script src="app.js?v=11"></script>
+    <script src="app.js?v=12"></script>
   </body>
 </html>

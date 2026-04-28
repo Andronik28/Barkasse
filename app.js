@@ -458,6 +458,7 @@ function renderShiftStatus() {
   details.innerHTML = card.classList.contains("compact-shift")
     ? `
       <span>${timeText(current.startsAt)} bis ${timeText(current.endsAt)}</span>
+      <span>${people}</span>
       <span>Stopp ${timeText(current.stopAt)}</span>
     `
     : `
@@ -759,6 +760,15 @@ function clearSales() {
   renderStats();
 }
 
+function showSettingsTab(tabName) {
+  document.querySelectorAll("[data-settings-tab]").forEach((tab) => {
+    tab.setAttribute("aria-selected", String(tab.dataset.settingsTab === tabName));
+  });
+  document.querySelectorAll("[data-settings-panel]").forEach((panel) => {
+    panel.hidden = panel.dataset.settingsPanel !== tabName;
+  });
+}
+
 function renderAll() {
   renderCategories();
   renderDrinks();
@@ -768,10 +778,14 @@ function renderAll() {
 }
 
 function updateClock() {
-  byId("clock").textContent = new Intl.DateTimeFormat("de-DE", {
+  const time = new Intl.DateTimeFormat("de-DE", {
     hour: "2-digit",
     minute: "2-digit"
   }).format(new Date());
+  const [hour, minute] = time.split(":");
+  const clock = byId("clock");
+  clock.setAttribute("aria-label", time);
+  clock.innerHTML = `<span>${hour}</span><span class="clock-colon">:</span><span>${minute}</span>`;
   renderShiftStatus();
   maybeShowStopWarning();
 }
@@ -817,6 +831,9 @@ byId("clearSales").addEventListener("click", clearSales);
 byId("categoryEditor").addEventListener("click", handleSettingsClick);
 byId("drinkEditor").addEventListener("click", handleSettingsClick);
 byId("shiftEditor").addEventListener("click", handleSettingsClick);
+document.querySelectorAll("[data-settings-tab]").forEach((tab) => {
+  tab.addEventListener("click", () => showSettingsTab(tab.dataset.settingsTab));
+});
 byId("closeStop").addEventListener("click", () => closeDialog(stopDialog));
 byId("ackStop").addEventListener("click", () => {
   const current = getCurrentShift();
