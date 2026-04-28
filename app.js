@@ -554,9 +554,12 @@ function renderCategoryEditor() {
     <article class="edit-card" data-category-id="${category.id}">
       <label>Name<input data-field="label" value="${escapeHtml(category.label)}"></label>
       <label>Icon<input data-field="icon" value="${escapeHtml(category.icon)}"></label>
-      <button class="secondary-button compact" data-action="save-category" type="button">Speichern</button>
+      <div class="edit-actions">
+        <button class="secondary-button compact" data-action="save-category" type="button">Speichern</button>
+        <button class="secondary-button compact danger-soft" data-action="delete-category" type="button">Kategorie löschen</button>
+      </div>
     </article>
-  `).join("");
+  `).join("") || `<div class="empty-order">Noch keine Kategorien angelegt.</div>`;
 }
 
 function renderDrinkEditor() {
@@ -572,9 +575,10 @@ function renderDrinkEditor() {
       <div class="edit-actions">
         <button class="secondary-button compact" data-action="save-drink" type="button">Speichern</button>
         <button class="secondary-button compact" data-action="clear-image" type="button">Bild löschen</button>
+        <button class="secondary-button compact danger-soft" data-action="delete-drink" type="button">Produkt löschen</button>
       </div>
     </article>
-  `).join("");
+  `).join("") || `<div class="empty-order">Noch keine Produkte angelegt.</div>`;
 }
 
 function renderShiftEditor() {
@@ -656,6 +660,28 @@ async function handleSettingsClick(event) {
     const category = catalog.categories.find((item) => item.id === categoryCard.dataset.categoryId);
     category.label = categoryCard.querySelector('[data-field="label"]').value.trim() || category.label;
     category.icon = categoryCard.querySelector('[data-field="icon"]').value.trim() || "□";
+  }
+
+  if (button.dataset.action === "delete-category" && categoryCard) {
+    const categoryId = categoryCard.dataset.categoryId;
+    const category = catalog.categories.find((item) => item.id === categoryId);
+    const productCount = catalog.drinks.filter((drink) => drink.category === categoryId).length;
+    const message = productCount
+      ? `Kategorie "${category?.label || ""}" und ${productCount} Produkt(e) darin löschen?`
+      : `Kategorie "${category?.label || ""}" löschen?`;
+    if (!window.confirm(message)) return;
+    catalog.categories = catalog.categories.filter((item) => item.id !== categoryId);
+    catalog.drinks = catalog.drinks.filter((drink) => drink.category !== categoryId);
+    order.clear();
+    ensureActiveCategory();
+  }
+
+  if (button.dataset.action === "delete-drink" && drinkCard) {
+    const drinkId = drinkCard.dataset.drinkId;
+    const drink = catalog.drinks.find((item) => item.id === drinkId);
+    if (!window.confirm(`Produkt "${drink?.name || ""}" löschen?`)) return;
+    catalog.drinks = catalog.drinks.filter((item) => item.id !== drinkId);
+    order.delete(drinkId);
   }
 
   if ((button.dataset.action === "save-drink" || button.dataset.action === "clear-image") && drinkCard) {

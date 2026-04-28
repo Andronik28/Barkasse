@@ -1,9 +1,9 @@
-const CACHE_NAME = "bar-kasse-offline-v5";
+const CACHE_NAME = "bar-kasse-offline-v6";
 const APP_FILES = [
   "./",
   "./index.html",
   "./styles.css",
-  "./app.js?v=5",
+  "./app.js?v=6",
   "./manifest.webmanifest",
   "./icon.svg"
 ];
