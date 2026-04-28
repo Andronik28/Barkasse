@@ -1,3 +1,5 @@
+const APP_VERSION = "19";
+
 const defaultCatalog = {
   categories: [
     { id: "aperitif", label: "Aperitif", icon: "☀" },
@@ -902,6 +904,38 @@ function clearSales() {
   renderStats();
 }
 
+function extractAppVersion(html) {
+  return html.match(/app\.js\?v=(\d+)/)?.[1] || "";
+}
+
+function refreshApp() {
+  const url = new URL(window.location.href);
+  url.searchParams.set("v", APP_VERSION);
+  url.searchParams.set("refresh", Date.now().toString());
+  window.location.replace(url.toString());
+}
+
+async function checkForAppUpdate({ reloadWhenNew = false } = {}) {
+  if (!navigator.onLine) return;
+  try {
+    const response = await fetch(`./index.html?update-check=${Date.now()}`, {
+      cache: "no-store"
+    });
+    if (!response.ok) return;
+    const remoteVersion = extractAppVersion(await response.text());
+    if (!remoteVersion || remoteVersion === APP_VERSION) return;
+
+    if (reloadWhenNew && order.size === 0 && !document.querySelector("dialog[open]")) {
+      const url = new URL(window.location.href);
+      url.searchParams.set("v", remoteVersion);
+      url.searchParams.set("refresh", Date.now().toString());
+      window.location.replace(url.toString());
+    }
+  } catch {
+    // Offline bleibt die installierte App mit dem vorhandenen Cache nutzbar.
+  }
+}
+
 function showSettingsTab(tabName) {
   document.querySelectorAll("[data-settings-tab]").forEach((tab) => {
     tab.setAttribute("aria-selected", String(tab.dataset.settingsTab === tabName));
@@ -935,7 +969,10 @@ function updateClock() {
 
 function registerServiceWorker() {
   if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("./service-worker.js").catch(() => {});
+    navigator.serviceWorker
+      .register("./service-worker.js")
+      .then((registration) => registration.update())
+      .catch(() => {});
   }
 }
 
@@ -980,6 +1017,7 @@ byId("closeSettings").addEventListener("click", () => closeDialog(byId("settings
 byId("addCategory").addEventListener("click", addCategory);
 byId("addDrink").addEventListener("click", addProduct);
 byId("addShift").addEventListener("click", addShift);
+byId("refreshApp").addEventListener("click", refreshApp);
 byId("resetDemoData").addEventListener("click", resetDemoData);
 byId("clearSales").addEventListener("click", clearSales);
 byId("categoryEditor").addEventListener("click", handleSettingsClick);
@@ -1002,4 +1040,10 @@ renderDenominations();
 renderDepositReturn();
 updateClock();
 registerServiceWorker();
+checkForAppUpdate({ reloadWhenNew: true });
+document.addEventListener("visibilitychange", () => {
+  if (!document.hidden) checkForAppUpdate({ reloadWhenNew: true });
+});
+window.addEventListener("online", () => checkForAppUpdate({ reloadWhenNew: true }));
 setInterval(updateClock, 10000);
+setInterval(() => checkForAppUpdate({ reloadWhenNew: true }), 5 * 60 * 1000);
