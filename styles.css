@@ -421,6 +421,15 @@ h4 {
   padding: 10px;
 }
 
+.deposit-line {
+  background: #eef3fb;
+  border: 1px solid var(--line);
+}
+
+.deposit-line .quantity-stepper {
+  min-width: 94px;
+}
+
 .quantity-stepper {
   display: flex;
   gap: 6px;
@@ -591,6 +600,53 @@ dialog::backdrop {
 .cash-card {
   display: grid;
   gap: 18px;
+}
+
+.deposit-card {
+  display: grid;
+  gap: 18px;
+  max-width: 560px;
+}
+
+.deposit-counter {
+  align-items: center;
+  background: #f7f9fd;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  display: grid;
+  gap: 14px;
+  grid-template-columns: auto 1fr auto;
+  padding: 12px;
+}
+
+.deposit-counter strong {
+  font-size: 2.4rem;
+  text-align: center;
+}
+
+.deposit-value {
+  background: #eef3fb;
+  border-radius: 8px;
+  display: grid;
+  gap: 4px;
+  padding: 14px;
+}
+
+.deposit-value span {
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.deposit-value strong {
+  font-size: 2rem;
+}
+
+.deposit-actions {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: 1fr 1fr;
 }
 
 .stats-header,
@@ -991,6 +1047,7 @@ dialog::backdrop {
   .recipe-content,
   .cash-received,
   .denomination-grid,
+  .deposit-actions,
   .stats-kpis,
   .product-edit,
   .shift-edit {

@@ -7,7 +7,7 @@
     <title>Bar Kasse</title>
     <link rel="manifest" href="manifest.webmanifest" />
     <link rel="apple-touch-icon" href="icon.svg" />
-    <link rel="stylesheet" href="styles.css?v=12" />
+    <link rel="stylesheet" href="styles.css?v=13" />
   </head>
   <body>
     <div class="app-shell">
@@ -66,6 +66,7 @@
           <div class="payment-actions">
             <button class="pay-button card" id="payCard" type="button">Mit Karte bezahlt</button>
             <button class="pay-button cash" id="openCash" type="button">Bar kassieren</button>
+            <button class="secondary-button" id="openDepositReturn" type="button">Pfand zurückgeben</button>
           </div>
 
           <div class="last-sale" id="lastSale" hidden></div>
@@ -130,6 +131,31 @@
         <div class="cash-actions">
           <button class="secondary-button" id="resetCash" type="button">Bargeld zurücksetzen</button>
           <button class="pay-button cash" id="finishCash" type="button" disabled>Bar bezahlt</button>
+        </div>
+      </div>
+    </dialog>
+
+    <dialog class="deposit-dialog" id="depositDialog">
+      <div class="dialog-card deposit-card">
+        <button class="icon-button close-dialog" id="closeDeposit" type="button" title="Schließen" aria-label="Schließen">
+          <span aria-hidden="true">×</span>
+        </button>
+        <div>
+          <p class="eyebrow">Pfandrückgabe</p>
+          <h2>Pfand annehmen</h2>
+        </div>
+        <div class="deposit-counter">
+          <button class="stepper-button" id="depositMinus" type="button" aria-label="Ein Pfand weniger">−</button>
+          <strong id="depositCount">1</strong>
+          <button class="stepper-button" id="depositPlus" type="button" aria-label="Ein Pfand mehr">+</button>
+        </div>
+        <div class="deposit-value">
+          <span>Wert</span>
+          <strong id="depositValue">2,00 €</strong>
+        </div>
+        <div class="deposit-actions">
+          <button class="pay-button card" id="returnDepositCash" type="button">Geld auszahlen</button>
+          <button class="pay-button cash" id="returnDepositKlopfer" type="button">Klopfer statt Geld</button>
         </div>
       </div>
     </dialog>
@@ -259,6 +285,6 @@
       </div>
     </dialog>
 
-    <script src="app.js?v=12"></script>
+    <script src="app.js?v=13"></script>
   </body>
 </html>

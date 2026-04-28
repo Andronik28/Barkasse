@@ -4,8 +4,7 @@ const defaultCatalog = {
     { id: "longdrink", label: "Longdrink", icon: "▥" },
     { id: "schnaepse", label: "Schnäpse", icon: "◇" },
     { id: "wein-bier", label: "Wein / Bier", icon: "▰" },
-    { id: "alkoholfrei", label: "Alkoholfrei", icon: "○" },
-    { id: "pfand", label: "Pfand", icon: "□" }
+    { id: "alkoholfrei", label: "Alkoholfrei", icon: "○" }
   ],
   drinks: [
     ["prosecco", "Prosecco 0,1 l", "aperitif", 3.5, "🥂", ["#f1c75b", "#fff4bc"], ["Prosecco", "Sektglas"], ["Gekühlt einschenken.", "Direkt servieren."]],
@@ -29,8 +28,7 @@ const defaultCatalog = {
     ["frucade-cola-mix", "Frucade Cola-Mix 0,5 l", "alkoholfrei", 3, "🥤", ["#412017", "#e56b3f"], ["Frucade Cola-Mix"], ["Kalt ausgeben.", "Mit Pfand ausgeben."]],
     ["coca-cola", "Coca-Cola 0,33 l", "alkoholfrei", 3, "🥤", ["#2c1712", "#ca4836"], ["Coca-Cola"], ["Kalt ausgeben.", "Mit Pfand ausgeben."]],
     ["apfelsaftschorle", "Apfelsaftschorle 0,5 l", "alkoholfrei", 3, "🍏", ["#86a84c", "#e9f3b0"], ["Apfelsaftschorle"], ["Kalt ausgeben.", "Mit Pfand ausgeben."]],
-    ["wasser", "Wasser spritzig / still 0,5 l", "alkoholfrei", 2.5, "💧", ["#4aa3df", "#c9f0ff"], ["Wasser spritzig oder still"], ["Kalt ausgeben.", "Mit Pfand ausgeben."]],
-    ["pfand", "Becher / Glas / Flaschen Pfand", "pfand", 2, "□", ["#7c8a82", "#f2eadb"], ["Pfandbetrag"], ["Bei Ausgabe berechnen.", "Bei Rückgabe entsprechend erstatten."]]
+    ["wasser", "Wasser spritzig / still 0,5 l", "alkoholfrei", 2.5, "💧", ["#4aa3df", "#c9f0ff"], ["Wasser spritzig oder still"], ["Kalt ausgeben.", "Mit Pfand ausgeben."]]
   ].map(([id, name, category, price, icon, colors, ingredients, steps]) => ({
     id,
     name,
@@ -52,8 +50,16 @@ const storageKeys = {
 };
 
 const denominations = [100, 50, 20, 10, 5, 2, 1, 0.5, 0.2, 0.1, 0.05];
+const depositProduct = {
+  id: "auto-pfand",
+  name: "Pfand",
+  category: "pfand",
+  price: 2,
+  icon: "□"
+};
 const order = new Map();
 const cashCounts = new Map();
+let depositReturnCount = 1;
 let catalog = loadCatalog();
 let sales = loadSales();
 let shifts = loadShifts();
@@ -72,6 +78,7 @@ const cashDialog = byId("cashDialog");
 const recipeDialog = byId("recipeDialog");
 const denominationGrid = byId("denominationGrid");
 const stopDialog = byId("stopDialog");
+const depositDialog = byId("depositDialog");
 
 function clone(value) {
   return JSON.parse(JSON.stringify(value));
@@ -163,7 +170,9 @@ function getTotal() {
 }
 
 function getItemCount() {
-  return [...order.values()].reduce((sum, line) => sum + line.quantity, 0);
+  return [...order.values()]
+    .filter((line) => line.drink.id !== depositProduct.id)
+    .reduce((sum, line) => sum + line.quantity, 0);
 }
 
 function parseLines(value) {
@@ -257,6 +266,11 @@ function addDrink(id) {
   if (!drink) return;
   const existing = order.get(id);
   order.set(id, { drink, quantity: existing ? existing.quantity + 1 : 1 });
+  const deposit = order.get(depositProduct.id);
+  order.set(depositProduct.id, {
+    drink: depositProduct,
+    quantity: deposit ? deposit.quantity + 1 : 1
+  });
   renderOrder();
 }
 
@@ -269,33 +283,54 @@ function changeQuantity(id, delta) {
   } else {
     order.set(id, { ...existing, quantity: next });
   }
+  if (id !== depositProduct.id) {
+    syncDepositForOrder();
+  }
   renderOrder();
+}
+
+function syncDepositForOrder() {
+  const drinkCount = [...order.values()]
+    .filter((line) => line.drink.id !== depositProduct.id)
+    .reduce((sum, line) => sum + line.quantity, 0);
+  if (drinkCount > 0) {
+    order.set(depositProduct.id, { drink: depositProduct, quantity: drinkCount });
+  } else {
+    order.delete(depositProduct.id);
+  }
 }
 
 function renderOrder() {
   orderList.innerHTML = "";
-  const lines = [...order.values()];
+  const lines = [...order.values()].sort((a, b) => {
+    if (a.drink.id === depositProduct.id) return 1;
+    if (b.drink.id === depositProduct.id) return -1;
+    return 0;
+  });
 
   if (!lines.length) {
     orderList.innerHTML = `<div class="empty-order">Tippe links auf Drinks, um die Bestellung zu starten.</div>`;
   } else {
     lines.forEach(({ drink, quantity }) => {
+      const isDeposit = drink.id === depositProduct.id;
       const item = document.createElement("div");
-      item.className = "order-item";
+      item.className = `order-item${isDeposit ? " deposit-line" : ""}`;
       item.innerHTML = `
         <div class="quantity-stepper">
-          <button class="stepper-button" type="button" aria-label="${drink.name} entfernen">−</button>
-          <button class="stepper-button" type="button" aria-label="${drink.name} hinzufügen">+</button>
+          ${isDeposit ? "" : `<button class="stepper-button" type="button" aria-label="${drink.name} entfernen">−</button>
+          <button class="stepper-button" type="button" aria-label="${drink.name} hinzufügen">+</button>`}
         </div>
         <div>
           <div class="order-name">${quantity} × ${drink.name}</div>
-          <span class="order-sub">${money(drink.price)} pro Stück</span>
+          <span class="order-sub">${isDeposit ? "Automatisch je Getränk" : `${money(drink.price)} pro Stück`}</span>
         </div>
         <div class="order-line-total">${money(drink.price * quantity)}</div>
       `;
-      const [minus, plus] = item.querySelectorAll(".stepper-button");
-      minus.addEventListener("click", () => changeQuantity(drink.id, -1));
-      plus.addEventListener("click", () => changeQuantity(drink.id, 1));
+      if (!isDeposit) {
+        const [minus, plus] = item.querySelectorAll(".stepper-button");
+        minus.addEventListener("click", () => changeQuantity(drink.id, -1));
+        plus.addEventListener("click", () => changeQuantity(drink.id, 1));
+      }
       orderList.append(item);
     });
   }
@@ -313,7 +348,9 @@ function recordSale(method, received = null, change = null) {
     productId: drink.id,
     productName: drink.name,
     categoryId: drink.category,
-    categoryName: catalog.categories.find((category) => category.id === drink.category)?.label || drink.category,
+    categoryName: drink.id === depositProduct.id
+      ? "Pfand"
+      : catalog.categories.find((category) => category.id === drink.category)?.label || drink.category,
     quantity,
     unitPrice: drink.price,
     lineTotal: Number((drink.price * quantity).toFixed(2))
@@ -328,6 +365,40 @@ function recordSale(method, received = null, change = null) {
     items
   });
   saveSales();
+}
+
+function recordDepositReturn(mode) {
+  const quantity = depositReturnCount;
+  const total = Number((depositProduct.price * quantity).toFixed(2));
+  const isCash = mode === "cash";
+  sales.push({
+    id: `deposit-${Date.now()}`,
+    createdAt: new Date().toISOString(),
+    method: isCash ? "deposit-cash" : "deposit-klopfer",
+    total: isCash ? -total : 0,
+    received: null,
+    change: isCash ? total : 0,
+    items: [
+      {
+        productId: isCash ? "pfand-rueckgabe-geld" : "pfand-rueckgabe-klopfer",
+        productName: isCash ? "Pfandrückgabe Geld" : "Pfandrückgabe Klopfer",
+        categoryId: "pfand",
+        categoryName: "Pfand",
+        quantity,
+        unitPrice: isCash ? -depositProduct.price : 0,
+        lineTotal: isCash ? -total : 0
+      }
+    ]
+  });
+  saveSales();
+  closeDialog(depositDialog);
+  lastSale.hidden = false;
+  lastSale.textContent = isCash
+    ? `Pfandrückgabe: ${quantity} × Pfand, ${money(total)} ausgezahlt.`
+    : `Pfandrückgabe: ${quantity} × Pfand gegen ${quantity} Klopfer.`;
+  depositReturnCount = 1;
+  renderDepositReturn();
+  renderStats();
 }
 
 function completeSale(method, received = null, change = null) {
@@ -380,6 +451,11 @@ function renderDenominations() {
     });
     denominationGrid.append(button);
   });
+}
+
+function renderDepositReturn() {
+  byId("depositCount").textContent = String(depositReturnCount);
+  byId("depositValue").textContent = money(depositReturnCount * depositProduct.price);
 }
 
 function getCashReceived() {
@@ -494,7 +570,9 @@ function getStats() {
   sales.forEach((sale) => {
     revenue += sale.total;
     sale.items.forEach((line) => {
-      items += line.quantity;
+      if (line.categoryId !== "pfand") {
+        items += line.quantity;
+      }
       const key = line.productId;
       const current = byProduct.get(key) || {
         productName: line.productName,
@@ -541,7 +619,7 @@ function downloadCsv() {
     sale.items.forEach((line) => {
       rows.push([
         new Date(sale.createdAt).toLocaleString("de-DE"),
-        sale.method === "card" ? "Karte" : "Bar",
+        paymentLabel(sale.method),
         line.productName,
         line.categoryName,
         line.quantity,
@@ -559,6 +637,14 @@ function downloadCsv() {
   link.download = `bar-kasse-verkaeufe-${new Date().toISOString().slice(0, 10)}.csv`;
   link.click();
   URL.revokeObjectURL(url);
+}
+
+function paymentLabel(method) {
+  if (method === "card") return "Karte";
+  if (method === "cash") return "Bar";
+  if (method === "deposit-cash") return "Pfand Geld";
+  if (method === "deposit-klopfer") return "Pfand Klopfer";
+  return method;
 }
 
 function renderSettings() {
@@ -811,6 +897,21 @@ byId("finishCash").addEventListener("click", () => {
 });
 byId("resetCash").addEventListener("click", resetCash);
 byId("closeCash").addEventListener("click", () => closeDialog(cashDialog));
+byId("openDepositReturn").addEventListener("click", () => {
+  renderDepositReturn();
+  depositDialog.showModal();
+});
+byId("closeDeposit").addEventListener("click", () => closeDialog(depositDialog));
+byId("depositMinus").addEventListener("click", () => {
+  depositReturnCount = Math.max(1, depositReturnCount - 1);
+  renderDepositReturn();
+});
+byId("depositPlus").addEventListener("click", () => {
+  depositReturnCount += 1;
+  renderDepositReturn();
+});
+byId("returnDepositCash").addEventListener("click", () => recordDepositReturn("cash"));
+byId("returnDepositKlopfer").addEventListener("click", () => recordDepositReturn("klopfer"));
 byId("closeRecipe").addEventListener("click", () => closeDialog(recipeDialog));
 byId("openStats").addEventListener("click", () => {
   renderStats();
@@ -845,6 +946,7 @@ byId("ackStop").addEventListener("click", () => {
 
 renderAll();
 renderDenominations();
+renderDepositReturn();
 updateClock();
 registerServiceWorker();
 setInterval(updateClock, 10000);
