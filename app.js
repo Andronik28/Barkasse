@@ -4,7 +4,8 @@ const defaultCatalog = {
     { id: "longdrink", label: "Longdrink", icon: "▥" },
     { id: "schnaepse", label: "Schnäpse", icon: "◇" },
     { id: "wein-bier", label: "Wein / Bier", icon: "▰" },
-    { id: "alkoholfrei", label: "Alkoholfrei", icon: "○" }
+    { id: "alkoholfrei", label: "Alkoholfrei", icon: "○" },
+    { id: "pfand", label: "Pfand", icon: "□" }
   ],
   drinks: [
     ["prosecco", "Prosecco 0,1 l", "aperitif", 3.5, "🥂", ["#f1c75b", "#fff4bc"], ["Prosecco", "Sektglas"], ["Gekühlt einschenken.", "Direkt servieren."]],
@@ -43,7 +44,7 @@ const defaultCatalog = {
 };
 
 const storageKeys = {
-  catalog: "bar-kasse.catalog.v3",
+  catalog: "bar-kasse.catalog.v4",
   sales: "bar-kasse.sales.v1",
   shifts: "bar-kasse.shifts.v1",
   stopAck: "bar-kasse.stop-ack.v1"
@@ -221,6 +222,10 @@ function renderCategories() {
 
 function renderDrinks() {
   drinkGrid.innerHTML = "";
+  if (activeCategory === "pfand") {
+    renderDepositCategory();
+    return;
+  }
   const drinks = catalog.drinks.filter((drink) => drink.category === activeCategory);
   if (!drinks.length) {
     drinkGrid.innerHTML = `<div class="empty-order full-grid">In dieser Kategorie sind noch keine Produkte angelegt.</div>`;
@@ -259,6 +264,39 @@ function renderDrinks() {
     });
     drinkGrid.append(card);
   });
+}
+
+function renderDepositCategory() {
+  const card = document.createElement("div");
+  card.className = "drink-card deposit-return-card";
+  card.role = "button";
+  card.tabIndex = 0;
+  card.setAttribute("aria-label", "Pfand zurückgeben");
+  card.style.setProperty("--drink-a", "#153c76");
+  card.style.setProperty("--drink-b", "#dce7f7");
+  card.innerHTML = `
+    <div class="drink-art" aria-hidden="true">□</div>
+    <div class="drink-meta">
+      <div>
+        <span class="drink-name">Pfand zurückgeben</span>
+        <span class="order-sub">Geld auszahlen oder Klopfer ausgeben</span>
+      </div>
+      <span class="drink-price">${money(depositProduct.price)}</span>
+    </div>
+  `;
+  card.addEventListener("click", openDepositReturn);
+  card.addEventListener("keydown", (event) => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      openDepositReturn();
+    }
+  });
+  drinkGrid.append(card);
+}
+
+function openDepositReturn() {
+  renderDepositReturn();
+  depositDialog.showModal();
 }
 
 function addDrink(id) {
@@ -897,10 +935,6 @@ byId("finishCash").addEventListener("click", () => {
 });
 byId("resetCash").addEventListener("click", resetCash);
 byId("closeCash").addEventListener("click", () => closeDialog(cashDialog));
-byId("openDepositReturn").addEventListener("click", () => {
-  renderDepositReturn();
-  depositDialog.showModal();
-});
 byId("closeDeposit").addEventListener("click", () => closeDialog(depositDialog));
 byId("depositMinus").addEventListener("click", () => {
   depositReturnCount = Math.max(1, depositReturnCount - 1);
