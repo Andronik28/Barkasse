@@ -1,26 +1,36 @@
 const defaultCatalog = {
   categories: [
-    { id: "spritz", label: "Spritz", icon: "☀" },
-    { id: "longdrinks", label: "Longdrinks", icon: "▥" },
-    { id: "cocktails", label: "Cocktails", icon: "◇" },
-    { id: "bier", label: "Bier", icon: "▰" },
-    { id: "alkoholfrei", label: "Ohne Alkohol", icon: "○" }
+    { id: "aperitif", label: "Aperitif", icon: "☀" },
+    { id: "longdrink", label: "Longdrink", icon: "▥" },
+    { id: "schnaepse", label: "Schnäpse", icon: "◇" },
+    { id: "wein-bier", label: "Wein / Bier", icon: "▰" },
+    { id: "alkoholfrei", label: "Alkoholfrei", icon: "○" },
+    { id: "pfand", label: "Pfand", icon: "□" }
   ],
   drinks: [
-    ["aperol", "Aperol Spritz", "spritz", 7.5, "🍊", ["#ef7f3b", "#f6cf72"], ["6 cl Prosecco", "4 cl Aperol", "2 cl Soda", "Eis", "Orange"], ["Weinglas mit Eis füllen.", "Aperol und Prosecco eingießen.", "Mit Soda auffüllen und kurz rühren.", "Mit Orange garnieren."]],
-    ["hugo", "Hugo", "spritz", 7.5, "🌿", ["#4ca66a", "#d7f3a8"], ["6 cl Prosecco", "2 cl Holunderblütensirup", "Soda", "Minze", "Limette", "Eis"], ["Glas mit Eis, Minze und Limette vorbereiten.", "Holunderblütensirup und Prosecco dazugeben.", "Mit Soda auffüllen.", "Einmal sanft umrühren."]],
-    ["limoncello", "Limoncello Spritz", "spritz", 8, "🍋", ["#f2c94c", "#fff2a6"], ["5 cl Limoncello", "7 cl Prosecco", "Soda", "Zitrone", "Eis"], ["Glas großzügig mit Eis füllen.", "Limoncello und Prosecco eingießen.", "Mit Soda auffüllen.", "Mit Zitronenscheibe servieren."]],
-    ["gin-tonic", "Gin Tonic", "longdrinks", 8.5, "🥒", ["#a9d7cf", "#f8fbf1"], ["5 cl Gin", "Tonic Water", "Eis", "Gurke oder Limette"], ["Highball-Glas mit Eis füllen.", "Gin eingießen.", "Mit Tonic auffüllen.", "Garnitur dazugeben."]],
-    ["moscow-mule", "Moscow Mule", "longdrinks", 8.5, "🫚", ["#c56a32", "#f0b164"], ["5 cl Vodka", "2 cl Limettensaft", "Ginger Beer", "Eis", "Limette"], ["Becher oder Glas mit Eis füllen.", "Vodka und Limettensaft dazugeben.", "Mit Ginger Beer auffüllen.", "Kurz rühren und garnieren."]],
-    ["cuba-libre", "Cuba Libre", "longdrinks", 8, "🥃", ["#7a3f22", "#d89958"], ["5 cl Rum", "Cola", "Limette", "Eis"], ["Glas mit Eis und Limettenspalten füllen.", "Rum dazugeben.", "Mit Cola auffüllen.", "Kurz rühren."]],
-    ["mojito", "Mojito", "cocktails", 9, "🍃", ["#2f9e62", "#c7f6cf"], ["5 cl weißer Rum", "2 cl Limettensaft", "2 TL Zucker", "Soda", "Minze", "Crushed Ice"], ["Minze, Zucker und Limettensaft sanft andrücken.", "Rum und Crushed Ice dazugeben.", "Mit Soda auffüllen.", "Vorsichtig umrühren."]],
-    ["margarita", "Margarita", "cocktails", 9.5, "🍸", ["#41b8a5", "#f5d85e"], ["5 cl Tequila", "2 cl Triple Sec", "2 cl Limettensaft", "Salzrand"], ["Glas mit Salzrand vorbereiten.", "Zutaten mit Eis kräftig shaken.", "In das Glas abseihen.", "Mit Limette garnieren."]],
-    ["espresso-martini", "Espresso Martini", "cocktails", 10, "☕", ["#3a2219", "#c8925b"], ["4 cl Vodka", "3 cl Espresso", "2 cl Kaffeelikör", "1 cl Zuckersirup"], ["Frischen Espresso abkühlen lassen.", "Alle Zutaten mit Eis shaken.", "Fein in Martiniglas abseihen.", "Mit Kaffeebohnen garnieren."]],
-    ["pils", "Pils 0,3", "bier", 3.5, "🍺", ["#f2b84b", "#fff1a6"], ["Pils vom Fass"], ["Glas schräg halten.", "Langsam einschenken.", "Schaumkrone setzen lassen.", "Direkt servieren."]],
-    ["weizen", "Weizen 0,5", "bier", 5, "🍻", ["#e0a13a", "#fff2bb"], ["Weizenbier"], ["Glas schräg halten.", "Langsam einschenken.", "Rest leicht schwenken und aufgießen.", "Mit Schaumkrone servieren."]],
-    ["cola", "Cola", "alkoholfrei", 3, "🥤", ["#2c1712", "#ca4836"], ["Cola", "Eis optional", "Zitrone optional"], ["Glas vorbereiten.", "Cola einschenken.", "Nach Wunsch Eis und Zitrone dazugeben."]],
-    ["wasser", "Wasser", "alkoholfrei", 2.5, "💧", ["#4aa3df", "#c9f0ff"], ["Still oder Sprudel"], ["Flasche oder Glas wählen.", "Kalt servieren."]],
-    ["virgin-mojito", "Virgin Mojito", "alkoholfrei", 6.5, "🍋", ["#62b96f", "#e7f9a9"], ["Limette", "Minze", "Zucker", "Soda", "Crushed Ice"], ["Limette, Minze und Zucker sanft andrücken.", "Crushed Ice dazugeben.", "Mit Soda auffüllen.", "Kurz umrühren."]]
+    ["prosecco", "Prosecco 0,1 l", "aperitif", 3.5, "🥂", ["#f1c75b", "#fff4bc"], ["Prosecco", "Sektglas"], ["Gekühlt einschenken.", "Direkt servieren."]],
+    ["aperol-spritz", "Aperol Spritz 0,3 l", "aperitif", 6.5, "🍊", ["#ef7f3b", "#f6cf72"], ["Prosecco", "Aperol", "Soda", "Eis", "Orange"], ["Glas mit Eis füllen.", "Aperol und Prosecco dazugeben.", "Mit Soda auffüllen.", "Kurz rühren und garnieren."]],
+    ["wildberry-lillet", "Wildberry Lillet 0,3 l", "aperitif", 6, "🫐", ["#7c3b82", "#f4a6d7"], ["Lillet", "Wild Berry", "Eis", "Beeren optional"], ["Glas mit Eis füllen.", "Lillet eingießen.", "Mit Wild Berry auffüllen.", "Kurz rühren."]],
+    ["ficken-fanta", "FickenFanta 0,3 l", "aperitif", 6, "🍹", ["#e85538", "#f6c45e"], ["Ficken Likör", "Fanta", "Eis optional"], ["Likör ins Glas geben.", "Mit Fanta auffüllen.", "Kurz umrühren."]],
+    ["jaeger-bull", "Jäger Bull 4 cl", "longdrink", 7, "⚡", ["#2b1b15", "#d9a441"], ["4 cl Jägermeister", "Energy Drink", "Eis"], ["Glas mit Eis füllen.", "Jägermeister eingießen.", "Mit Energy auffüllen."]],
+    ["wodka-bull", "Wodka Bull 4 cl", "longdrink", 7, "⚡", ["#8da7b8", "#f4e15f"], ["4 cl Wodka", "Energy Drink", "Eis"], ["Glas mit Eis füllen.", "Wodka eingießen.", "Mit Energy auffüllen."]],
+    ["gin-tonic", "Gin Tonic 4 cl", "longdrink", 7, "🥒", ["#a9d7cf", "#f8fbf1"], ["4 cl Gin", "Tonic Water", "Eis", "Gurke oder Limette"], ["Glas mit Eis füllen.", "Gin eingießen.", "Mit Tonic auffüllen.", "Garnitur dazugeben."]],
+    ["jaegermeister", "Jägermeister 2 cl", "schnaepse", 3, "◆", ["#2b1b15", "#c47b32"], ["Jägermeister"], ["Gekühlt ins Shotglas geben."]],
+    ["berliner-luft", "Berliner Luft 2 cl", "schnaepse", 3, "◆", ["#8fd3d7", "#f7ffff"], ["Berliner Luft"], ["Gekühlt ins Shotglas geben."]],
+    ["ficken-likoer", "Ficken Likör 2 cl", "schnaepse", 3, "◆", ["#d61f35", "#f5a2a7"], ["Ficken Likör"], ["Gekühlt ins Shotglas geben."]],
+    ["flocki-spezial", "Flocki Spezial 2 cl", "schnaepse", 3, "◆", ["#4c3b2e", "#d7b892"], ["Flocki Spezial"], ["Geheimtipp kalt servieren."]],
+    ["klopfer", "Klopfer 1 Stk.", "schnaepse", 2, "◆", ["#5b6c7a", "#d9e0e7"], ["Klopfer"], ["Flasche ausgeben."]],
+    ["rotwein", "Rotwein 0,2 l", "wein-bier", 4, "🍷", ["#6f1d2b", "#d38b8b"], ["Dornfelder trocken"], ["0,2 l einschenken.", "Im Weinglas servieren."]],
+    ["weisswein", "Weißwein 0,2 l", "wein-bier", 4, "🥂", ["#e4d27a", "#fff6c9"], ["Pfälzer Landwein halbtrocken"], ["0,2 l einschenken.", "Gekühlt servieren."]],
+    ["weinschorle", "Weinschorle süß/sauer 0,5 l", "wein-bier", 6, "🍷", ["#e5c46a", "#fff0b8"], ["Wein", "Limo oder Sprudel"], ["Becher mit Wein füllen.", "Süß oder sauer auffüllen.", "Kurz rühren."]],
+    ["san-cucino", "San Cucino 0,33 l", "wein-bier", 4, "🍺", ["#e2a23c", "#fff0a8"], ["Bier von der Brauerei Julius"], ["Flasche öffnen.", "Mit Pfand ausgeben."]],
+    ["laetitia", "Laetitia 0,33 l", "wein-bier", 4, "🍺", ["#c88d35", "#f3d995"], ["Bier von der Brauerei Julius"], ["Flasche öffnen.", "Mit Pfand ausgeben."]],
+    ["radler", "Radler 0,5 l", "wein-bier", 4, "🍺", ["#e8b850", "#fff4bb"], ["Radler"], ["0,5 l ausgeben.", "Mit Pfand ausgeben."]],
+    ["frucade-cola-mix", "Frucade Cola-Mix 0,5 l", "alkoholfrei", 3, "🥤", ["#412017", "#e56b3f"], ["Frucade Cola-Mix"], ["Kalt ausgeben.", "Mit Pfand ausgeben."]],
+    ["coca-cola", "Coca-Cola 0,33 l", "alkoholfrei", 3, "🥤", ["#2c1712", "#ca4836"], ["Coca-Cola"], ["Kalt ausgeben.", "Mit Pfand ausgeben."]],
+    ["apfelsaftschorle", "Apfelsaftschorle 0,5 l", "alkoholfrei", 3, "🍏", ["#86a84c", "#e9f3b0"], ["Apfelsaftschorle"], ["Kalt ausgeben.", "Mit Pfand ausgeben."]],
+    ["wasser", "Wasser spritzig / still 0,5 l", "alkoholfrei", 2.5, "💧", ["#4aa3df", "#c9f0ff"], ["Wasser spritzig oder still"], ["Kalt ausgeben.", "Mit Pfand ausgeben."]],
+    ["pfand", "Becher / Glas / Flaschen Pfand", "pfand", 2, "□", ["#7c8a82", "#f2eadb"], ["Pfandbetrag"], ["Bei Ausgabe berechnen.", "Bei Rückgabe entsprechend erstatten."]]
   ].map(([id, name, category, price, icon, colors, ingredients, steps]) => ({
     id,
     name,
@@ -35,7 +45,7 @@ const defaultCatalog = {
 };
 
 const storageKeys = {
-  catalog: "bar-kasse.catalog.v2",
+  catalog: "bar-kasse.catalog.v3",
   sales: "bar-kasse.sales.v1",
   shifts: "bar-kasse.shifts.v1",
   stopAck: "bar-kasse.stop-ack.v1"
