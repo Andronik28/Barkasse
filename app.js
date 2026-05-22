@@ -1,4 +1,4 @@
-const APP_VERSION = "24";
+const APP_VERSION = "25";
 
 const defaultCatalog = {
   categories: [
@@ -274,14 +274,16 @@ function createDrinkCard(drink, options = {}) {
     ${happyHourPrice ? `<span class="happy-hour-badge">Happy Hour 5€</span>` : ""}
     ${drinkImageMarkup(drink, "drink-art")}
     <div class="drink-meta">
-      <div>
+      <div class="drink-copy">
         <span class="drink-name">${drink.name}</span>
-        ${showInfoButton ? `<button class="recipe-button" type="button" aria-label="Info zu ${escapeHtml(drink.name)} anzeigen"><span class="info-icon" aria-hidden="true">i</span><span class="info-label">Info</span></button>` : ""}
       </div>
-      <span class="drink-price${happyHourPrice ? " happy-hour-price" : ""}">
-        ${happyHourPrice ? `<small>${money(drink.price)}</small>` : ""}
-        ${money(getUnitPrice(drink))}
-      </span>
+      <div class="drink-actions">
+        ${showInfoButton ? `<button class="recipe-button" type="button" aria-label="Info zu ${escapeHtml(drink.name)} anzeigen"><span class="info-icon" aria-hidden="true">i</span><span class="info-label">Info</span></button>` : ""}
+        <span class="drink-price${happyHourPrice ? " happy-hour-price" : ""}">
+          ${happyHourPrice ? `<small>${money(drink.price)}</small>` : ""}
+          ${money(getUnitPrice(drink))}
+        </span>
+      </div>
     </div>
   `;
   card.addEventListener("click", () => {

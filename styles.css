@@ -380,7 +380,6 @@ h4 {
 }
 
 .compact-drink-card .drink-meta {
-  grid-template-columns: 1fr;
   padding: 10px;
 }
 
@@ -390,7 +389,6 @@ h4 {
 }
 
 .compact-drink-card .drink-price {
-  justify-self: start;
   font-size: 0.88rem;
   padding: 6px 8px;
 }
@@ -410,16 +408,21 @@ h4 {
   align-items: stretch;
   display: grid;
   gap: 8px;
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-rows: minmax(0, 1fr) auto;
   min-height: 0;
-  padding: 14px;
+  padding: 14px 14px 12px;
 }
 
-.drink-meta > div {
-  display: grid;
-  grid-template-rows: minmax(0, 1fr) auto;
+.drink-copy {
   min-width: 0;
-  padding-right: 4px;
+}
+
+.drink-actions {
+  align-items: end;
+  display: flex;
+  gap: 8px;
+  justify-content: space-between;
+  min-width: 0;
 }
 
 .drink-name {
@@ -437,10 +440,10 @@ h4 {
 
 .drink-price {
   align-self: end;
-  justify-self: end;
   background: var(--accent-strong);
   border-radius: 7px;
   color: #fffdf8;
+  flex: 0 0 auto;
   font-size: 1.05rem;
   font-weight: 900;
   padding: 8px 10px;
@@ -460,6 +463,16 @@ h4 {
   text-decoration: line-through;
 }
 
+.happy-hour-card .recipe-button {
+  justify-content: center;
+  padding: 4px;
+  width: 34px;
+}
+
+.happy-hour-card .info-label {
+  display: none;
+}
+
 .recipe-button {
   align-items: center;
   background: rgba(17, 48, 104, 0.08);
@@ -468,14 +481,13 @@ h4 {
   color: var(--accent-strong);
   cursor: pointer;
   display: inline-flex;
+  flex: 0 1 auto;
   font-size: 0.88rem;
   font-weight: 900;
   gap: 6px;
-  justify-self: start;
-  margin-top: 8px;
   min-height: 30px;
   min-width: 30px;
-  padding: 4px 10px 4px 7px;
+  padding: 4px 8px 4px 6px;
   text-align: left;
   max-width: 100%;
   overflow: hidden;
@@ -493,13 +505,13 @@ h4 {
   border-radius: 999px;
   color: #fffdf8;
   display: inline-flex;
-  flex: 0 0 20px;
+  flex: 0 0 18px;
   font-size: 0.82rem;
   font-weight: 950;
-  height: 20px;
+  height: 18px;
   justify-content: center;
   line-height: 1;
-  width: 20px;
+  width: 18px;
 }
 
 .info-label {
