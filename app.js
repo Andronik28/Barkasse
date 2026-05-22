@@ -1,4 +1,4 @@
-const APP_VERSION = "23";
+const APP_VERSION = "24";
 
 const defaultCatalog = {
   categories: [
@@ -49,7 +49,7 @@ const storageKeys = {
   catalog: "bar-kasse.catalog.v4",
   sales: "bar-kasse.sales.v1",
   shifts: "bar-kasse.shifts.v1",
-  popularCollapsed: "bar-kasse.popular-collapsed.v1",
+  popularHidden: "bar-kasse.popular-hidden.v1",
   stopAck: "bar-kasse.stop-ack.v1"
 };
 
@@ -337,19 +337,16 @@ function renderPopular() {
   ids.forEach((drink) => popularList.append(createDrinkCard(drink, { compact: true })));
 }
 
-function setPopularCollapsed(collapsed) {
-  document.body.classList.toggle("popular-collapsed", collapsed);
-  byId("togglePopular").setAttribute("aria-expanded", String(!collapsed));
-  byId("togglePopular").setAttribute(
-    "aria-label",
-    collapsed ? "Schnellzugriff ausklappen" : "Schnellzugriff einklappen"
-  );
-  localStorage.setItem(storageKeys.popularCollapsed, collapsed ? "1" : "0");
+function setPopularHidden(hidden) {
+  document.body.classList.toggle("popular-hidden", hidden);
+  byId("togglePopular").textContent = hidden ? "Schnellzugriff einblenden" : "Schnellzugriff ausblenden";
+  byId("togglePopular").setAttribute("aria-pressed", String(hidden));
+  localStorage.setItem(storageKeys.popularHidden, hidden ? "1" : "0");
 }
 
-function initPopularToggle() {
-  const collapsed = localStorage.getItem(storageKeys.popularCollapsed) === "1";
-  setPopularCollapsed(collapsed);
+function initPopularVisibility() {
+  const hidden = localStorage.getItem(storageKeys.popularHidden) === "1";
+  setPopularHidden(hidden);
 }
 
 function renderDepositCategory() {
@@ -1085,7 +1082,7 @@ byId("openStats").addEventListener("click", () => {
 byId("closeStats").addEventListener("click", () => closeDialog(byId("statsDialog")));
 byId("downloadCsv").addEventListener("click", downloadCsv);
 byId("togglePopular").addEventListener("click", () => {
-  setPopularCollapsed(!document.body.classList.contains("popular-collapsed"));
+  setPopularHidden(!document.body.classList.contains("popular-hidden"));
 });
 byId("openSettings").addEventListener("click", () => {
   renderSettings();
@@ -1116,7 +1113,7 @@ byId("ackStop").addEventListener("click", () => {
 renderAll();
 renderDenominations();
 renderDepositReturn();
-initPopularToggle();
+initPopularVisibility();
 updateClock();
 registerServiceWorker();
 checkForAppUpdate({ reloadWhenNew: true });

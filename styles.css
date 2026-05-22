@@ -159,11 +159,10 @@ h4 {
   gap: 18px;
   grid-template-columns: 172px minmax(480px, 1fr) 380px;
   min-height: 0;
-  transition: grid-template-columns 180ms ease;
 }
 
-.popular-collapsed .workspace {
-  grid-template-columns: 58px minmax(560px, 1fr) 380px;
+.popular-hidden .workspace {
+  grid-template-columns: minmax(560px, 1fr) 380px;
 }
 
 .menu-area,
@@ -198,37 +197,8 @@ h4 {
   font-size: 1.25rem;
 }
 
-.popular-toggle {
-  background: #e9eef8;
-  color: var(--accent-strong);
-  flex: 0 0 auto;
-  height: 34px;
-  width: 34px;
-}
-
-.popular-toggle span {
-  display: inline-block;
-  font-size: 1.55rem;
-  line-height: 1;
-  transform: translateX(-1px);
-  transition: transform 160ms ease;
-}
-
-.popular-collapsed .popular-panel {
-  padding: 10px;
-}
-
-.popular-collapsed .popular-title,
-.popular-collapsed .popular-list {
+.popular-hidden .popular-panel {
   display: none;
-}
-
-.popular-collapsed .popular-heading {
-  justify-content: center;
-}
-
-.popular-collapsed .popular-toggle span {
-  transform: rotate(180deg) translateX(-1px);
 }
 
 .popular-list {
@@ -1241,18 +1211,12 @@ dialog::backdrop {
     grid-template-columns: 1fr;
   }
 
-  .popular-collapsed .workspace {
+  .popular-hidden .workspace {
     grid-template-columns: 1fr;
   }
 
   .popular-panel {
     grid-template-rows: auto auto;
-  }
-
-  .popular-collapsed .popular-panel {
-    justify-self: start;
-    min-height: 54px;
-    width: 58px;
   }
 
   .popular-list {
