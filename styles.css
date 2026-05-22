@@ -987,7 +987,7 @@ dialog::backdrop {
   border-radius: 8px;
   display: grid;
   gap: 6px;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   padding: 6px;
 }
 
@@ -1043,6 +1043,94 @@ dialog::backdrop {
   display: grid;
   gap: 16px;
   grid-template-columns: 0.78fr 1.22fr;
+}
+
+.happy-hour-editor {
+  display: grid;
+  gap: 18px;
+}
+
+.happy-hour-grid {
+  background: #f7f9fd;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  padding: 16px;
+}
+
+.happy-hour-grid label {
+  color: var(--muted);
+  display: grid;
+  font-size: 0.78rem;
+  font-weight: 900;
+  gap: 6px;
+  text-transform: uppercase;
+}
+
+.happy-hour-grid input {
+  background: #ffffff;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--text);
+  font: inherit;
+  min-height: 44px;
+  padding: 9px 10px;
+  text-transform: none;
+}
+
+.toggle-setting {
+  align-content: center;
+  align-items: center;
+  grid-template-columns: auto 1fr;
+  text-transform: none;
+}
+
+.toggle-setting input {
+  height: 20px;
+  width: 20px;
+}
+
+.happy-hour-groups {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: 0.85fr 1.15fr;
+}
+
+.happy-hour-groups section {
+  min-width: 0;
+}
+
+.happy-hour-groups h4 {
+  margin-bottom: 10px;
+}
+
+.check-list {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  display: grid;
+  gap: 0;
+  max-height: 34vh;
+  overflow: auto;
+}
+
+.check-list label {
+  align-items: center;
+  border-bottom: 1px solid var(--line);
+  display: grid;
+  gap: 10px;
+  grid-template-columns: auto 1fr;
+  padding: 10px 12px;
+}
+
+.check-list label:last-child {
+  border-bottom: 0;
+}
+
+.check-list input {
+  height: 18px;
+  width: 18px;
 }
 
 .settings-section {
@@ -1237,7 +1325,9 @@ dialog::backdrop {
   }
 
   .settings-layout,
-  .settings-columns {
+  .settings-columns,
+  .happy-hour-grid,
+  .happy-hour-groups {
     grid-template-columns: 1fr;
   }
 

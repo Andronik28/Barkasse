@@ -1,4 +1,4 @@
-const APP_VERSION = "25";
+const APP_VERSION = "26";
 
 const defaultCatalog = {
   categories: [
@@ -47,6 +47,7 @@ const defaultCatalog = {
 
 const storageKeys = {
   catalog: "bar-kasse.catalog.v4",
+  happyHour: "bar-kasse.happy-hour.v1",
   sales: "bar-kasse.sales.v1",
   shifts: "bar-kasse.shifts.v1",
   popularHidden: "bar-kasse.popular-hidden.v1",
@@ -54,6 +55,14 @@ const storageKeys = {
 };
 
 const denominations = [100, 50, 20, 10, 5, 2, 1, 0.5, 0.2, 0.1, 0.05];
+const defaultHappyHourConfig = {
+  enabled: true,
+  start: "20:00",
+  end: "21:00",
+  price: 5,
+  categoryIds: ["longdrink"],
+  productIds: ["aperol-spritz"]
+};
 const depositProduct = {
   id: "auto-pfand",
   name: "Pfand",
@@ -67,6 +76,7 @@ let depositReturnCount = 1;
 let catalog = loadCatalog();
 let sales = loadSales();
 let shifts = loadShifts();
+let happyHourConfig = loadHappyHour();
 let activeCategory = catalog.categories[0]?.id || "";
 let happyHourActive = isHappyHour();
 
@@ -155,6 +165,21 @@ function loadShifts() {
   return defaultShifts();
 }
 
+function loadHappyHour() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(storageKeys.happyHour));
+    return {
+      ...clone(defaultHappyHourConfig),
+      ...saved,
+      categoryIds: Array.isArray(saved?.categoryIds) ? saved.categoryIds : [...defaultHappyHourConfig.categoryIds],
+      productIds: Array.isArray(saved?.productIds) ? saved.productIds : [...defaultHappyHourConfig.productIds]
+    };
+  } catch {
+    localStorage.removeItem(storageKeys.happyHour);
+  }
+  return clone(defaultHappyHourConfig);
+}
+
 function saveCatalog() {
   localStorage.setItem(storageKeys.catalog, JSON.stringify(catalog));
 }
@@ -167,22 +192,39 @@ function saveShifts() {
   localStorage.setItem(storageKeys.shifts, JSON.stringify(shifts));
 }
 
+function saveHappyHour() {
+  localStorage.setItem(storageKeys.happyHour, JSON.stringify(happyHourConfig));
+}
+
 function money(value) {
   return formatter.format(Number(value) || 0);
 }
 
+function moneyShort(value) {
+  return money(value).replace(",00", "");
+}
+
+function timeToMinutes(value) {
+  const [hours, minutes] = String(value || "00:00").split(":").map(Number);
+  return (hours || 0) * 60 + (minutes || 0);
+}
+
 function isHappyHour(date = new Date()) {
-  const hour = date.getHours();
-  return hour >= 20 && hour < 21;
+  if (!happyHourConfig.enabled) return false;
+  const now = date.getHours() * 60 + date.getMinutes();
+  const start = timeToMinutes(happyHourConfig.start);
+  const end = timeToMinutes(happyHourConfig.end);
+  if (start === end) return false;
+  return start < end ? now >= start && now < end : now >= start || now < end;
 }
 
 function hasHappyHourPrice(drink, date = new Date()) {
   if (!isHappyHour(date) || drink.id === depositProduct.id) return false;
-  return drink.category === "longdrink" || drink.id === "aperol-spritz";
+  return happyHourConfig.categoryIds.includes(drink.category) || happyHourConfig.productIds.includes(drink.id);
 }
 
 function getUnitPrice(drink, date = new Date()) {
-  return hasHappyHourPrice(drink, date) ? 5 : drink.price;
+  return hasHappyHourPrice(drink, date) ? happyHourConfig.price : drink.price;
 }
 
 function hasDrinkInfo(drink) {
@@ -271,7 +313,7 @@ function createDrinkCard(drink, options = {}) {
   card.style.setProperty("--drink-a", drink.colors?.[0] || "#9aa6a1");
   card.style.setProperty("--drink-b", drink.colors?.[1] || "#f4e9d7");
   card.innerHTML = `
-    ${happyHourPrice ? `<span class="happy-hour-badge">Happy Hour 5€</span>` : ""}
+    ${happyHourPrice ? `<span class="happy-hour-badge">Happy Hour ${moneyShort(happyHourConfig.price)}</span>` : ""}
     ${drinkImageMarkup(drink, "drink-art")}
     <div class="drink-meta">
       <div class="drink-copy">
@@ -774,6 +816,7 @@ function paymentLabel(method) {
 function renderSettings() {
   renderCategoryEditor();
   renderDrinkEditor();
+  renderHappyHourEditor();
   renderShiftEditor();
 }
 
@@ -824,6 +867,44 @@ function renderShiftEditor() {
       </div>
     </article>
   `).join("") || `<div class="empty-order">Noch keine Schichten angelegt.</div>`;
+}
+
+function renderHappyHourEditor() {
+  byId("happyHourEditor").innerHTML = `
+    <div class="happy-hour-grid">
+      <label class="toggle-setting">
+        <input data-field="enabled" type="checkbox" ${happyHourConfig.enabled ? "checked" : ""}>
+        <span>Happy Hour aktiv</span>
+      </label>
+      <label>Start<input data-field="start" type="time" value="${escapeHtml(happyHourConfig.start)}"></label>
+      <label>Ende<input data-field="end" type="time" value="${escapeHtml(happyHourConfig.end)}"></label>
+      <label>Happy-Hour-Preis<input data-field="price" type="number" min="0" step="0.1" value="${happyHourConfig.price}"></label>
+    </div>
+    <div class="happy-hour-groups">
+      <section>
+        <h4>Kategorien</h4>
+        <div class="check-list">
+          ${catalog.categories.map((category) => `
+            <label>
+              <input data-happy-category="${category.id}" type="checkbox" ${happyHourConfig.categoryIds.includes(category.id) ? "checked" : ""}>
+              <span>${escapeHtml(category.label)}</span>
+            </label>
+          `).join("")}
+        </div>
+      </section>
+      <section>
+        <h4>Einzelne Produkte</h4>
+        <div class="check-list">
+          ${catalog.drinks.map((drink) => `
+            <label>
+              <input data-happy-product="${drink.id}" type="checkbox" ${happyHourConfig.productIds.includes(drink.id) ? "checked" : ""}>
+              <span>${escapeHtml(drink.name)}</span>
+            </label>
+          `).join("")}
+        </div>
+      </section>
+    </div>
+  `;
 }
 
 function addCategory() {
@@ -883,6 +964,23 @@ async function handleSettingsClick(event) {
   const categoryCard = button.closest("[data-category-id]");
   const drinkCard = button.closest("[data-drink-id]");
   const shiftCard = button.closest("[data-shift-id]");
+
+  if (button.dataset.action === "save-happy-hour") {
+    const editor = byId("happyHourEditor");
+    happyHourConfig = {
+      enabled: editor.querySelector('[data-field="enabled"]').checked,
+      start: editor.querySelector('[data-field="start"]').value || defaultHappyHourConfig.start,
+      end: editor.querySelector('[data-field="end"]').value || defaultHappyHourConfig.end,
+      price: Number(editor.querySelector('[data-field="price"]').value) || defaultHappyHourConfig.price,
+      categoryIds: [...editor.querySelectorAll("[data-happy-category]:checked")].map((input) => input.dataset.happyCategory),
+      productIds: [...editor.querySelectorAll("[data-happy-product]:checked")].map((input) => input.dataset.happyProduct)
+    };
+    happyHourActive = isHappyHour();
+    saveHappyHour();
+    renderAll();
+    renderSettings();
+    return;
+  }
 
   if (button.dataset.action === "save-category" && categoryCard) {
     const category = catalog.categories.find((item) => item.id === categoryCard.dataset.categoryId);
@@ -1099,6 +1197,8 @@ byId("resetDemoData").addEventListener("click", resetDemoData);
 byId("clearSales").addEventListener("click", clearSales);
 byId("categoryEditor").addEventListener("click", handleSettingsClick);
 byId("drinkEditor").addEventListener("click", handleSettingsClick);
+byId("happyHourEditor").addEventListener("click", handleSettingsClick);
+document.querySelector('[data-action="save-happy-hour"]').addEventListener("click", handleSettingsClick);
 byId("shiftEditor").addEventListener("click", handleSettingsClick);
 document.querySelectorAll("[data-settings-tab]").forEach((tab) => {
   tab.addEventListener("click", () => showSettingsTab(tab.dataset.settingsTab));

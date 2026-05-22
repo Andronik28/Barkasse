@@ -7,13 +7,13 @@
     <title>Bar Kasse</title>
     <link rel="manifest" href="manifest.webmanifest" />
     <link rel="apple-touch-icon" href="icon.svg" />
-    <link rel="stylesheet" href="styles.css?v=25" />
+    <link rel="stylesheet" href="styles.css?v=26" />
   </head>
   <body>
     <div class="app-shell">
       <header class="topbar">
         <div class="brand-lockup">
-          <img class="club-logo" src="assets/burgfunken_logo.png?v=25" alt="Burgfunken Neuburg" />
+          <img class="club-logo" src="assets/burgfunken_logo.png?v=26" alt="Burgfunken Neuburg" />
           <div>
             <p class="eyebrow">Burgfunken Neuburg</p>
             <h1>Bar Kasse</h1>
@@ -228,6 +228,7 @@
         <div class="settings-tabs" role="tablist" aria-label="Einstellungsbereiche">
           <button class="settings-tab" data-settings-tab="categories" type="button" role="tab" aria-selected="true">Kategorien</button>
           <button class="settings-tab" data-settings-tab="products" type="button" role="tab" aria-selected="false">Produkte</button>
+          <button class="settings-tab" data-settings-tab="happyHour" type="button" role="tab" aria-selected="false">Happy Hour</button>
           <button class="settings-tab" data-settings-tab="shifts" type="button" role="tab" aria-selected="false">Schicht</button>
           <button class="settings-tab" data-settings-tab="system" type="button" role="tab" aria-selected="false">System</button>
         </div>
@@ -253,6 +254,17 @@
               <button class="secondary-button compact" id="addDrink" type="button">Produkt anlegen</button>
             </div>
             <div class="edit-list relaxed-list" id="drinkEditor"></div>
+          </section>
+
+          <section class="settings-block settings-panel" data-settings-panel="happyHour" hidden>
+            <div class="settings-block-heading">
+              <div>
+                <p class="eyebrow">Preise</p>
+                <h3>Happy Hour</h3>
+              </div>
+              <button class="secondary-button compact" data-action="save-happy-hour" type="button">Happy Hour speichern</button>
+            </div>
+            <div class="happy-hour-editor" id="happyHourEditor"></div>
           </section>
 
           <section class="settings-block settings-panel" data-settings-panel="shifts" hidden>
@@ -296,6 +308,6 @@
       </div>
     </dialog>
 
-    <script src="app.js?v=25"></script>
+    <script src="app.js?v=26"></script>
   </body>
 </html>
