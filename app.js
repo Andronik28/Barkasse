@@ -1,4 +1,4 @@
-const APP_VERSION = "22";
+const APP_VERSION = "23";
 
 const defaultCatalog = {
   categories: [
@@ -49,6 +49,7 @@ const storageKeys = {
   catalog: "bar-kasse.catalog.v4",
   sales: "bar-kasse.sales.v1",
   shifts: "bar-kasse.shifts.v1",
+  popularCollapsed: "bar-kasse.popular-collapsed.v1",
   stopAck: "bar-kasse.stop-ack.v1"
 };
 
@@ -334,6 +335,21 @@ function renderPopular() {
 
   popularList.innerHTML = "";
   ids.forEach((drink) => popularList.append(createDrinkCard(drink, { compact: true })));
+}
+
+function setPopularCollapsed(collapsed) {
+  document.body.classList.toggle("popular-collapsed", collapsed);
+  byId("togglePopular").setAttribute("aria-expanded", String(!collapsed));
+  byId("togglePopular").setAttribute(
+    "aria-label",
+    collapsed ? "Schnellzugriff ausklappen" : "Schnellzugriff einklappen"
+  );
+  localStorage.setItem(storageKeys.popularCollapsed, collapsed ? "1" : "0");
+}
+
+function initPopularToggle() {
+  const collapsed = localStorage.getItem(storageKeys.popularCollapsed) === "1";
+  setPopularCollapsed(collapsed);
 }
 
 function renderDepositCategory() {
@@ -1068,6 +1084,9 @@ byId("openStats").addEventListener("click", () => {
 });
 byId("closeStats").addEventListener("click", () => closeDialog(byId("statsDialog")));
 byId("downloadCsv").addEventListener("click", downloadCsv);
+byId("togglePopular").addEventListener("click", () => {
+  setPopularCollapsed(!document.body.classList.contains("popular-collapsed"));
+});
 byId("openSettings").addEventListener("click", () => {
   renderSettings();
   byId("settingsDialog").showModal();
@@ -1097,6 +1116,7 @@ byId("ackStop").addEventListener("click", () => {
 renderAll();
 renderDenominations();
 renderDepositReturn();
+initPopularToggle();
 updateClock();
 registerServiceWorker();
 checkForAppUpdate({ reloadWhenNew: true });

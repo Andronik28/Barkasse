@@ -7,13 +7,13 @@
     <title>Bar Kasse</title>
     <link rel="manifest" href="manifest.webmanifest" />
     <link rel="apple-touch-icon" href="icon.svg" />
-    <link rel="stylesheet" href="styles.css?v=22" />
+    <link rel="stylesheet" href="styles.css?v=23" />
   </head>
   <body>
     <div class="app-shell">
       <header class="topbar">
         <div class="brand-lockup">
-          <img class="club-logo" src="assets/burgfunken_logo.png?v=22" alt="Burgfunken Neuburg" />
+          <img class="club-logo" src="assets/burgfunken_logo.png?v=23" alt="Burgfunken Neuburg" />
           <div>
             <p class="eyebrow">Burgfunken Neuburg</p>
             <h1>Bar Kasse</h1>
@@ -36,8 +36,13 @@
       <main class="workspace">
         <aside class="popular-panel" aria-label="Beliebte Produkte">
           <div class="popular-heading">
-            <p class="eyebrow">Schnellzugriff</p>
-            <h2>Beliebt</h2>
+            <div class="popular-title">
+              <p class="eyebrow">Schnellzugriff</p>
+              <h2>Beliebt</h2>
+            </div>
+            <button class="icon-button popular-toggle" id="togglePopular" type="button" aria-expanded="true" aria-label="Schnellzugriff einklappen">
+              <span aria-hidden="true">‹</span>
+            </button>
           </div>
           <div class="popular-list" id="popularList"></div>
         </aside>
@@ -293,6 +298,6 @@
       </div>
     </dialog>
 
-    <script src="app.js?v=22"></script>
+    <script src="app.js?v=23"></script>
   </body>
 </html>
