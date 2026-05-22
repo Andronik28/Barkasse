@@ -250,11 +250,58 @@ h4 {
   width: 100%;
   overflow: hidden;
   padding: 0;
+  position: relative;
   text-align: left;
 }
 
 .drink-card:active {
   transform: scale(0.985);
+}
+
+.drink-card::after {
+  align-items: center;
+  background: rgba(17, 48, 104, 0.94);
+  border-radius: 999px;
+  box-shadow: 0 10px 24px rgba(17, 48, 104, 0.22);
+  color: #fffdf8;
+  content: "Hinzugefügt";
+  display: flex;
+  font-size: 0.8rem;
+  font-weight: 950;
+  inset: 12px 12px auto auto;
+  min-height: 34px;
+  opacity: 0;
+  padding: 0 12px;
+  pointer-events: none;
+  position: absolute;
+  transform: translateY(8px) scale(0.92);
+  transition: opacity 140ms ease, transform 140ms ease;
+  z-index: 3;
+}
+
+.drink-card.is-added {
+  border-color: rgba(17, 48, 104, 0.62);
+  box-shadow: 0 16px 34px rgba(17, 48, 104, 0.22);
+}
+
+.drink-card.is-added::after {
+  animation: added-badge 620ms ease both;
+}
+
+@keyframes added-badge {
+  0% {
+    opacity: 0;
+    transform: translateY(8px) scale(0.92);
+  }
+  18%,
+  72% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.96);
+  }
 }
 
 .drink-art,

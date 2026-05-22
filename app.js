@@ -1,4 +1,4 @@
-const APP_VERSION = "19";
+const APP_VERSION = "20";
 
 const defaultCatalog = {
   categories: [
@@ -258,12 +258,16 @@ function createDrinkCard(drink, options = {}) {
       <span class="drink-price">${money(drink.price)}</span>
     </div>
   `;
-  card.addEventListener("click", () => addDrink(drink.id));
+  card.addEventListener("click", () => {
+    addDrink(drink.id);
+    showAddFeedback(card);
+  });
   card.addEventListener("keydown", (event) => {
     if (event.target !== card) return;
     if (event.key === "Enter" || event.key === " ") {
       event.preventDefault();
       addDrink(drink.id);
+      showAddFeedback(card);
     }
   });
   const recipeButton = card.querySelector(".recipe-button");
@@ -274,6 +278,16 @@ function createDrinkCard(drink, options = {}) {
     });
   }
   return card;
+}
+
+function showAddFeedback(card) {
+  window.clearTimeout(card.feedbackTimer);
+  card.classList.remove("is-added");
+  void card.offsetWidth;
+  card.classList.add("is-added");
+  card.feedbackTimer = window.setTimeout(() => {
+    card.classList.remove("is-added");
+  }, 650);
 }
 
 function renderPopular() {
