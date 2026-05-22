@@ -442,19 +442,50 @@ h4 {
 }
 
 .recipe-button {
-  background: transparent;
-  border: 0;
+  align-items: center;
+  background: rgba(17, 48, 104, 0.08);
+  border: 1px solid rgba(17, 48, 104, 0.18);
+  border-radius: 999px;
   color: var(--accent-strong);
   cursor: pointer;
+  display: inline-flex;
   font-size: 0.88rem;
-  font-weight: 800;
+  font-weight: 900;
+  gap: 6px;
+  justify-self: start;
   margin-top: 8px;
-  padding: 0;
+  min-height: 30px;
+  min-width: 30px;
+  padding: 4px 10px 4px 7px;
   text-align: left;
   max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.recipe-button:active {
+  transform: scale(0.96);
+}
+
+.info-icon {
+  align-items: center;
+  background: var(--accent-strong);
+  border-radius: 999px;
+  color: #fffdf8;
+  display: inline-flex;
+  flex: 0 0 20px;
+  font-size: 0.82rem;
+  font-weight: 950;
+  height: 20px;
+  justify-content: center;
+  line-height: 1;
+  width: 20px;
+}
+
+.info-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .order-panel {
@@ -1204,6 +1235,16 @@ dialog::backdrop {
 
   .drink-card {
     max-width: none;
+  }
+
+  .recipe-button {
+    justify-content: center;
+    padding: 4px;
+    width: 34px;
+  }
+
+  .info-label {
+    display: none;
   }
 
   .popular-list {

@@ -1,4 +1,4 @@
-const APP_VERSION = "21";
+const APP_VERSION = "22";
 
 const defaultCatalog = {
   categories: [
@@ -184,6 +184,10 @@ function getUnitPrice(drink, date = new Date()) {
   return hasHappyHourPrice(drink, date) ? 5 : drink.price;
 }
 
+function hasDrinkInfo(drink) {
+  return Boolean((drink.ingredients || []).length || (drink.steps || []).length);
+}
+
 function getTotal() {
   return [...order.values()].reduce((sum, line) => sum + getUnitPrice(line.drink) * line.quantity, 0);
 }
@@ -257,6 +261,7 @@ function renderDrinks() {
 
 function createDrinkCard(drink, options = {}) {
   const happyHourPrice = hasHappyHourPrice(drink);
+  const showInfoButton = !options.compact && hasDrinkInfo(drink);
   const card = document.createElement("div");
   card.className = `drink-card${options.compact ? " compact-drink-card" : ""}${happyHourPrice ? " happy-hour-card" : ""}`;
   card.role = "button";
@@ -270,7 +275,7 @@ function createDrinkCard(drink, options = {}) {
     <div class="drink-meta">
       <div>
         <span class="drink-name">${drink.name}</span>
-        ${options.compact ? "" : `<button class="recipe-button" type="button">Rezept ansehen</button>`}
+        ${showInfoButton ? `<button class="recipe-button" type="button" aria-label="Info zu ${escapeHtml(drink.name)} anzeigen"><span class="info-icon" aria-hidden="true">i</span><span class="info-label">Info</span></button>` : ""}
       </div>
       <span class="drink-price${happyHourPrice ? " happy-hour-price" : ""}">
         ${happyHourPrice ? `<small>${money(drink.price)}</small>` : ""}
