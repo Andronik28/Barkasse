@@ -1,4 +1,4 @@
-const APP_VERSION = "20";
+const APP_VERSION = "21";
 
 const defaultCatalog = {
   categories: [
@@ -67,6 +67,7 @@ let catalog = loadCatalog();
 let sales = loadSales();
 let shifts = loadShifts();
 let activeCategory = catalog.categories[0]?.id || "";
+let happyHourActive = isHappyHour();
 
 const formatter = new Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" });
 const byId = (id) => document.getElementById(id);
@@ -169,8 +170,22 @@ function money(value) {
   return formatter.format(Number(value) || 0);
 }
 
+function isHappyHour(date = new Date()) {
+  const hour = date.getHours();
+  return hour >= 20 && hour < 21;
+}
+
+function hasHappyHourPrice(drink, date = new Date()) {
+  if (!isHappyHour(date) || drink.id === depositProduct.id) return false;
+  return drink.category === "longdrink" || drink.id === "aperol-spritz";
+}
+
+function getUnitPrice(drink, date = new Date()) {
+  return hasHappyHourPrice(drink, date) ? 5 : drink.price;
+}
+
 function getTotal() {
-  return [...order.values()].reduce((sum, line) => sum + line.drink.price * line.quantity, 0);
+  return [...order.values()].reduce((sum, line) => sum + getUnitPrice(line.drink) * line.quantity, 0);
 }
 
 function getItemCount() {
@@ -241,21 +256,26 @@ function renderDrinks() {
 }
 
 function createDrinkCard(drink, options = {}) {
+  const happyHourPrice = hasHappyHourPrice(drink);
   const card = document.createElement("div");
-  card.className = `drink-card${options.compact ? " compact-drink-card" : ""}`;
+  card.className = `drink-card${options.compact ? " compact-drink-card" : ""}${happyHourPrice ? " happy-hour-card" : ""}`;
   card.role = "button";
   card.tabIndex = 0;
-  card.setAttribute("aria-label", `${drink.name} fuer ${money(drink.price)} hinzufuegen`);
+  card.setAttribute("aria-label", `${drink.name} fuer ${money(getUnitPrice(drink))} hinzufuegen`);
   card.style.setProperty("--drink-a", drink.colors?.[0] || "#9aa6a1");
   card.style.setProperty("--drink-b", drink.colors?.[1] || "#f4e9d7");
   card.innerHTML = `
+    ${happyHourPrice ? `<span class="happy-hour-badge">Happy Hour 5€</span>` : ""}
     ${drinkImageMarkup(drink, "drink-art")}
     <div class="drink-meta">
       <div>
         <span class="drink-name">${drink.name}</span>
         ${options.compact ? "" : `<button class="recipe-button" type="button">Rezept ansehen</button>`}
       </div>
-      <span class="drink-price">${money(drink.price)}</span>
+      <span class="drink-price${happyHourPrice ? " happy-hour-price" : ""}">
+        ${happyHourPrice ? `<small>${money(drink.price)}</small>` : ""}
+        ${money(getUnitPrice(drink))}
+      </span>
     </div>
   `;
   card.addEventListener("click", () => {
@@ -387,6 +407,8 @@ function renderOrder() {
   } else {
     lines.forEach(({ drink, quantity }) => {
       const isDeposit = drink.id === depositProduct.id;
+      const unitPrice = getUnitPrice(drink);
+      const happyHourPrice = hasHappyHourPrice(drink);
       const item = document.createElement("div");
       item.className = `order-item${isDeposit ? " deposit-line" : ""}`;
       item.innerHTML = `
@@ -396,9 +418,9 @@ function renderOrder() {
         </div>
         <div>
           <div class="order-name">${quantity} × ${drink.name}</div>
-          <span class="order-sub">${isDeposit ? "Automatisch, manuell korrigierbar" : `${money(drink.price)} pro Stück`}</span>
+          <span class="order-sub">${isDeposit ? "Automatisch, manuell korrigierbar" : `${money(unitPrice)} pro Stück${happyHourPrice ? " · Happy Hour" : ""}`}</span>
         </div>
-        <div class="order-line-total">${money(drink.price * quantity)}</div>
+        <div class="order-line-total">${money(unitPrice * quantity)}</div>
       `;
       const [minus, plus] = item.querySelectorAll(".stepper-button");
       minus.addEventListener("click", () => changeQuantity(drink.id, -1));
@@ -416,20 +438,27 @@ function renderOrder() {
 
 function recordSale(method, received = null, change = null) {
   const total = getTotal();
+  const createdAt = new Date();
   const items = [...order.values()].map(({ drink, quantity }) => ({
-    productId: drink.id,
-    productName: drink.name,
-    categoryId: drink.category,
-    categoryName: drink.id === depositProduct.id
-      ? "Pfand"
-      : catalog.categories.find((category) => category.id === drink.category)?.label || drink.category,
+    drink,
     quantity,
-    unitPrice: drink.price,
-    lineTotal: Number((drink.price * quantity).toFixed(2))
-  }));
+    unitPrice: getUnitPrice(drink, createdAt),
+    happyHourPrice: hasHappyHourPrice(drink, createdAt)
+  })).map(({ drink, quantity, unitPrice, happyHourPrice }) => ({
+      productId: drink.id,
+      productName: drink.name,
+      categoryId: drink.category,
+      categoryName: drink.id === depositProduct.id
+        ? "Pfand"
+        : catalog.categories.find((category) => category.id === drink.category)?.label || drink.category,
+      quantity,
+      unitPrice,
+      lineTotal: Number((unitPrice * quantity).toFixed(2)),
+      priceNote: happyHourPrice ? "Happy Hour" : ""
+    }));
   sales.push({
     id: `sale-${Date.now()}`,
-    createdAt: new Date().toISOString(),
+    createdAt: createdAt.toISOString(),
     method,
     total: Number(total.toFixed(2)),
     received,
@@ -491,7 +520,9 @@ function completeSale(method, received = null, change = null) {
 
 function showRecipe(drink) {
   byId("recipeTitle").textContent = drink.name;
-  byId("recipePrice").textContent = money(drink.price);
+  byId("recipePrice").textContent = hasHappyHourPrice(drink)
+    ? `Happy Hour ${money(getUnitPrice(drink))} · regulär ${money(drink.price)}`
+    : money(drink.price);
   const image = byId("recipeImage");
   image.className = "recipe-image";
   image.style.backgroundImage = "";
@@ -686,7 +717,7 @@ function csvEscape(value) {
 }
 
 function downloadCsv() {
-  const rows = [["Datum", "Zahlart", "Produkt", "Kategorie", "Anzahl", "Einzelpreis", "Zeilensumme", "Bestellsumme"]];
+  const rows = [["Datum", "Zahlart", "Produkt", "Kategorie", "Anzahl", "Einzelpreis", "Zeilensumme", "Preisregel", "Bestellsumme"]];
   sales.forEach((sale) => {
     sale.items.forEach((line) => {
       rows.push([
@@ -697,6 +728,7 @@ function downloadCsv() {
         line.quantity,
         line.unitPrice.toFixed(2).replace(".", ","),
         line.lineTotal.toFixed(2).replace(".", ","),
+        line.priceNote || "",
         sale.total.toFixed(2).replace(".", ",")
       ]);
     });
@@ -979,6 +1011,14 @@ function updateClock() {
   clock.innerHTML = `<span>${hour}</span><span class="clock-colon">:</span><span>${minute}</span>`;
   renderShiftStatus();
   maybeShowStopWarning();
+  const nextHappyHourActive = isHappyHour();
+  if (nextHappyHourActive !== happyHourActive) {
+    happyHourActive = nextHappyHourActive;
+    renderDrinks();
+    renderPopular();
+    renderOrder();
+    renderCash();
+  }
 }
 
 function registerServiceWorker() {

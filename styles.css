@@ -288,6 +288,36 @@ h4 {
   animation: added-badge 620ms ease both;
 }
 
+.happy-hour-card {
+  border-color: rgba(240, 104, 46, 0.86);
+  box-shadow:
+    0 0 0 4px rgba(251, 199, 78, 0.48),
+    0 18px 34px rgba(240, 104, 46, 0.24);
+}
+
+.happy-hour-card .drink-art {
+  background:
+    radial-gradient(circle at 34% 18%, rgba(255, 255, 255, 0.82), transparent 18%),
+    linear-gradient(135deg, #e94141 0%, #f5a63f 48%, #ffe376 100%);
+}
+
+.happy-hour-badge {
+  background: #e94141;
+  border: 2px solid #fff2b8;
+  border-radius: 999px;
+  box-shadow: 0 8px 18px rgba(112, 24, 24, 0.24);
+  color: #fffdf8;
+  font-size: 0.76rem;
+  font-weight: 950;
+  inset: 10px auto auto 10px;
+  line-height: 1;
+  padding: 7px 10px;
+  pointer-events: none;
+  position: absolute;
+  text-transform: uppercase;
+  z-index: 2;
+}
+
 @keyframes added-badge {
   0% {
     opacity: 0;
@@ -346,6 +376,11 @@ h4 {
   padding: 6px 8px;
 }
 
+.compact-drink-card .happy-hour-badge {
+  font-size: 0.64rem;
+  padding: 6px 8px;
+}
+
 .drink-art.uploaded,
 .recipe-image.uploaded {
   background-position: center;
@@ -391,6 +426,19 @@ h4 {
   font-weight: 900;
   padding: 8px 10px;
   white-space: nowrap;
+}
+
+.happy-hour-price {
+  align-items: center;
+  background: #e94141;
+  display: inline-flex;
+  gap: 6px;
+}
+
+.happy-hour-price small {
+  color: rgba(255, 253, 248, 0.78);
+  font-size: 0.72em;
+  text-decoration: line-through;
 }
 
 .recipe-button {
