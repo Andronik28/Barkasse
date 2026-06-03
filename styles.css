@@ -851,17 +851,14 @@ dialog::backdrop {
 
 .cash-card {
   display: grid;
-  gap: 18px;
+  gap: 16px;
+  max-width: min(940px, 94vw);
 }
 
 .cash-header {
-  justify-content: flex-start;
+  border-bottom: 1px solid var(--line);
   padding-right: 76px;
-}
-
-.cash-total {
-  margin-left: auto;
-  margin-right: auto;
+  padding-bottom: 12px;
 }
 
 .deposit-card {
@@ -1241,52 +1238,119 @@ dialog::backdrop {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
-.cash-total {
-  background: var(--accent-strong);
-  border-radius: 8px;
-  color: #fffdf8;
+.cash-summary {
   display: grid;
-  gap: 3px;
-  min-width: 150px;
-  padding: 12px 16px;
-  text-align: right;
+  gap: 12px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
-.cash-total span,
-.cash-received span {
+.cash-status {
+  border-radius: 8px;
+  display: grid;
+  gap: 6px;
+  min-height: 112px;
+  padding: 16px;
+}
+
+.cash-due {
+  background: #10243a;
+  color: #fffdf8;
+}
+
+.cash-paid {
+  background: #fff4cf;
+  border: 2px solid rgba(217, 149, 47, 0.42);
+  color: #523510;
+}
+
+.cash-change {
+  background: #e9f6ef;
+  border: 2px solid rgba(22, 112, 68, 0.24);
+  color: #0f4e30;
+}
+
+.cash-change.is-ready {
+  background: #167044;
+  color: #fffdf8;
+}
+
+.cash-status span {
   color: inherit;
   font-size: 0.8rem;
-  font-weight: 800;
-  opacity: 0.72;
+  font-weight: 900;
+  opacity: 0.74;
   text-transform: uppercase;
 }
 
-.cash-total strong {
-  font-size: 1.5rem;
+.cash-status strong {
+  color: inherit;
+  font-size: clamp(2rem, 4vw, 3.4rem);
+  line-height: 1;
 }
 
-.cash-received {
+.cash-quick {
   display: grid;
   gap: 10px;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
 }
 
-.cash-received > div {
-  background: #f7f9fd;
+.quick-cash-button {
+  background: #ffffff;
+  border: 2px solid var(--line);
   border-radius: 8px;
+  color: var(--ink);
+  cursor: pointer;
   display: grid;
   gap: 4px;
-  padding: 14px;
+  min-height: 76px;
+  padding: 10px;
+  text-align: left;
 }
 
-.cash-received strong {
-  font-size: 2rem;
+.quick-cash-button span {
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.quick-cash-button strong {
+  font-size: 1.25rem;
+}
+
+.quick-cash-button.is-selected {
+  border-color: var(--green);
+  box-shadow: 0 0 0 3px rgba(22, 112, 68, 0.16);
 }
 
 .denomination-grid {
   display: grid;
+  gap: 14px;
+  grid-template-columns: 1.1fr 0.9fr;
+}
+
+.denomination-section {
+  background: #f7f9fd;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+}
+
+.denomination-section h3 {
+  font-size: 1rem;
+  margin: 0;
+}
+
+.denomination-buttons {
+  display: grid;
   gap: 10px;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.cash-coins .denomination-buttons {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
 .denomination-button {
@@ -1296,8 +1360,20 @@ dialog::backdrop {
   cursor: pointer;
   display: grid;
   gap: 4px;
-  min-height: 84px;
+  min-height: 78px;
   padding: 10px;
+}
+
+.cash-bills .denomination-button {
+  background: linear-gradient(135deg, #ffffff, #edf4ee);
+  border-color: rgba(22, 112, 68, 0.26);
+}
+
+.cash-coins .denomination-button {
+  background: radial-gradient(circle at 28% 24%, #fff5c6, #f0d37b 56%, #d8a938);
+  border-color: rgba(158, 112, 24, 0.28);
+  border-radius: 999px;
+  aspect-ratio: 1;
 }
 
 .denomination-button strong {
@@ -1430,8 +1506,11 @@ dialog::backdrop {
   }
 
   .recipe-content,
-  .cash-received,
+  .cash-summary,
+  .cash-quick,
   .denomination-grid,
+  .denomination-buttons,
+  .cash-coins .denomination-buttons,
   .deposit-actions,
   .stats-kpis,
   .product-edit,

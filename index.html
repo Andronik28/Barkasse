@@ -7,13 +7,13 @@
     <title>Bar Kasse</title>
     <link rel="manifest" href="manifest.webmanifest" />
     <link rel="apple-touch-icon" href="icon.svg" />
-    <link rel="stylesheet" href="styles.css?v=27" />
+    <link rel="stylesheet" href="styles.css?v=28" />
   </head>
   <body>
     <div class="app-shell">
       <header class="topbar">
         <div class="brand-lockup">
-          <img class="club-logo" src="assets/burgfunken_logo.png?v=27" alt="Burgfunken Neuburg" />
+          <img class="club-logo" src="assets/burgfunken_logo.png?v=28" alt="Burgfunken Neuburg" />
           <div>
             <p class="eyebrow">Burgfunken Neuburg</p>
             <h1>Bar Kasse</h1>
@@ -118,23 +118,24 @@
             <p class="eyebrow">Barzahlung</p>
             <h2>Geld erhalten</h2>
           </div>
-          <div class="cash-total">
+        </div>
+
+        <div class="cash-summary">
+          <div class="cash-status cash-due">
             <span>Zu zahlen</span>
             <strong id="cashDue">0,00 €</strong>
           </div>
-        </div>
-
-        <div class="cash-received">
-          <div>
+          <div class="cash-status cash-paid">
             <span>Erhalten</span>
             <strong id="cashReceived">0,00 €</strong>
           </div>
-          <div>
+          <div class="cash-status cash-change">
             <span>Rückgeld</span>
             <strong id="cashChange">0,00 €</strong>
           </div>
         </div>
 
+        <div class="cash-quick" id="cashQuick"></div>
         <div class="denomination-grid" id="denominationGrid"></div>
 
         <div class="cash-actions">
@@ -308,6 +309,6 @@
       </div>
     </dialog>
 
-    <script src="app.js?v=27"></script>
+    <script src="app.js?v=28"></script>
   </body>
 </html>
