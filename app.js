@@ -1,4 +1,4 @@
-const APP_VERSION = "26";
+const APP_VERSION = "27";
 
 const defaultCatalog = {
   categories: [
@@ -1211,6 +1211,10 @@ byId("ackStop").addEventListener("click", () => {
   }
   closeDialog(stopDialog);
 });
+document.addEventListener("dblclick", (event) => {
+  if (event.target.closest("input, select, textarea")) return;
+  event.preventDefault();
+}, { passive: false });
 
 renderAll();
 renderDenominations();

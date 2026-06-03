@@ -16,11 +16,15 @@
 
 * {
   box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
 }
 
 html,
 body {
   height: 100%;
+  overscroll-behavior: none;
+  touch-action: manipulation;
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
@@ -31,12 +35,22 @@ body {
     var(--bg);
   color: var(--ink);
   overflow: hidden;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 button {
   color: inherit;
   font: inherit;
-  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+input,
+select,
+textarea {
+  touch-action: auto;
+  -webkit-user-select: text;
+  user-select: text;
 }
 
 .app-shell {
