@@ -1,4 +1,4 @@
-const APP_VERSION = "29";
+const APP_VERSION = "30";
 
 const defaultCatalog = {
   categories: [
@@ -532,6 +532,7 @@ function recordSale(method, received = null, change = null) {
 
 function recordDepositReturn(mode) {
   const quantity = depositReturnCount;
+  const klopferQuantity = quantity * 2;
   const total = Number((depositProduct.price * quantity).toFixed(2));
   const isCash = mode === "cash";
   sales.push({
@@ -547,7 +548,7 @@ function recordDepositReturn(mode) {
         productName: isCash ? "Pfandrückgabe Geld" : "Pfandrückgabe Klopfer",
         categoryId: "pfand",
         categoryName: "Pfand",
-        quantity,
+        quantity: isCash ? quantity : klopferQuantity,
         unitPrice: isCash ? -depositProduct.price : 0,
         lineTotal: isCash ? -total : 0
       }
@@ -558,7 +559,7 @@ function recordDepositReturn(mode) {
   lastSale.hidden = false;
   lastSale.textContent = isCash
     ? `Pfandrückgabe: ${quantity} × Pfand, ${money(total)} ausgezahlt.`
-    : `Pfandrückgabe: ${quantity} × Pfand gegen ${quantity} Klopfer.`;
+    : `Pfandrückgabe: ${quantity} × Pfand gegen ${klopferQuantity} Klopfer.`;
   depositReturnCount = 1;
   renderDepositReturn();
   renderStats();
