@@ -1,4 +1,4 @@
-const APP_VERSION = "28";
+const APP_VERSION = "29";
 
 const defaultCatalog = {
   categories: [
@@ -72,7 +72,6 @@ const depositProduct = {
 };
 const order = new Map();
 const cashCounts = new Map();
-let cashOverride = null;
 let depositReturnCount = 1;
 let catalog = loadCatalog();
 let sales = loadSales();
@@ -94,7 +93,6 @@ const lastSale = byId("lastSale");
 const cashDialog = byId("cashDialog");
 const recipeDialog = byId("recipeDialog");
 const denominationGrid = byId("denominationGrid");
-const cashQuick = byId("cashQuick");
 const stopDialog = byId("stopDialog");
 const depositDialog = byId("depositDialog");
 
@@ -609,36 +607,6 @@ function cashLabel(value) {
   return `${Math.round(value * 100)} ct`;
 }
 
-function getQuickCashValues(due) {
-  if (!due) return [];
-  const roundedEuro = Math.ceil(due);
-  const roundedFive = Math.ceil(due / 5) * 5;
-  const base = [due, roundedEuro, roundedFive, 10, 20, 50, 100]
-    .filter((value) => value >= due)
-    .map((value) => Number(value.toFixed(2)));
-  return [...new Set(base)].slice(0, 5);
-}
-
-function setCashAmount(value) {
-  cashCounts.clear();
-  cashOverride = value;
-  renderCash();
-}
-
-function renderQuickCash(due) {
-  cashQuick.innerHTML = "";
-  getQuickCashValues(due).forEach((value, index) => {
-    const button = document.createElement("button");
-    button.className = `quick-cash-button${cashOverride === value ? " is-selected" : ""}`;
-    button.type = "button";
-    button.innerHTML = index === 0
-      ? `<span>Passend</span><strong>${money(value)}</strong>`
-      : `<span>Erhalten</span><strong>${cashLabel(value)}</strong>`;
-    button.addEventListener("click", () => setCashAmount(value));
-    cashQuick.append(button);
-  });
-}
-
 function renderDenominations() {
   denominationGrid.innerHTML = "";
   const groups = [
@@ -651,16 +619,15 @@ function renderDenominations() {
     section.innerHTML = `<h3>${group.title}</h3><div class="denomination-buttons"></div>`;
     const buttonWrap = section.querySelector(".denomination-buttons");
     group.values.forEach((value) => {
-    const count = cashCounts.get(value) || 0;
-    const button = document.createElement("button");
-    button.className = "denomination-button";
-    button.type = "button";
+      const count = cashCounts.get(value) || 0;
+      const button = document.createElement("button");
+      button.className = "denomination-button";
+      button.type = "button";
       button.innerHTML = `<strong>${cashLabel(value)}</strong><span>${count} × gewählt</span>`;
-    button.addEventListener("click", () => {
-        cashOverride = null;
-      cashCounts.set(value, count + 1);
-      renderCash();
-    });
+      button.addEventListener("click", () => {
+        cashCounts.set(value, count + 1);
+        renderCash();
+      });
       buttonWrap.append(button);
     });
     denominationGrid.append(section);
@@ -673,7 +640,6 @@ function renderDepositReturn() {
 }
 
 function getCashReceived() {
-  if (cashOverride !== null) return cashOverride;
   return [...cashCounts.entries()].reduce((sum, [value, count]) => sum + value * count, 0);
 }
 
@@ -686,13 +652,11 @@ function renderCash() {
   byId("cashChange").textContent = money(change);
   byId("cashChange").closest(".cash-status").classList.toggle("is-ready", received >= due && due > 0);
   byId("finishCash").disabled = received < due || due === 0;
-  renderQuickCash(due);
   renderDenominations();
 }
 
 function resetCash() {
   cashCounts.clear();
-  cashOverride = null;
   renderCash();
 }
 

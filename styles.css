@@ -1288,41 +1288,6 @@ dialog::backdrop {
   line-height: 1;
 }
 
-.cash-quick {
-  display: grid;
-  gap: 10px;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-}
-
-.quick-cash-button {
-  background: #ffffff;
-  border: 2px solid var(--line);
-  border-radius: 8px;
-  color: var(--ink);
-  cursor: pointer;
-  display: grid;
-  gap: 4px;
-  min-height: 76px;
-  padding: 10px;
-  text-align: left;
-}
-
-.quick-cash-button span {
-  color: var(--muted);
-  font-size: 0.72rem;
-  font-weight: 900;
-  text-transform: uppercase;
-}
-
-.quick-cash-button strong {
-  font-size: 1.25rem;
-}
-
-.quick-cash-button.is-selected {
-  border-color: var(--green);
-  box-shadow: 0 0 0 3px rgba(22, 112, 68, 0.16);
-}
-
 .denomination-grid {
   display: grid;
   gap: 14px;
@@ -1507,7 +1472,6 @@ dialog::backdrop {
 
   .recipe-content,
   .cash-summary,
-  .cash-quick,
   .denomination-grid,
   .denomination-buttons,
   .cash-coins .denomination-buttons,
