@@ -1,4 +1,4 @@
-const APP_VERSION = "31";
+const APP_VERSION = "32";
 
 const defaultCatalog = {
   categories: [
@@ -92,6 +92,7 @@ const orderList = byId("orderList");
 const itemCount = byId("itemCount");
 const orderTotal = byId("orderTotal");
 const lastSale = byId("lastSale");
+const sumupStatus = byId("sumupStatus");
 const cashDialog = byId("cashDialog");
 const recipeDialog = byId("recipeDialog");
 const denominationGrid = byId("denominationGrid");
@@ -518,6 +519,7 @@ function renderOrder() {
   itemCount.textContent = String(getItemCount());
   orderTotal.textContent = money(getTotal());
   const hasOrder = order.size > 0;
+  byId("paySumup").disabled = !hasOrder;
   byId("payCard").disabled = !hasOrder;
   byId("openCash").disabled = !hasOrder;
 }
@@ -552,6 +554,51 @@ function recordSale(method, received = null, change = null) {
     items
   });
   saveSales();
+}
+
+function setSumupStatus(message, kind = "") {
+  sumupStatus.hidden = !message;
+  sumupStatus.textContent = message || "";
+  sumupStatus.className = `sumup-status${kind ? ` ${kind}` : ""}`;
+}
+
+async function startSumupCheckout() {
+  const total = getTotal();
+  if (!total) return;
+  if (!navigator.onLine) {
+    setSumupStatus("iPad ist offline. Bitte SumUp manuell kassieren und danach 'Manuell Karte' buchen.", "error");
+    return;
+  }
+
+  const button = byId("paySumup");
+  button.disabled = true;
+  setSumupStatus("SumUp wird gestartet ...", "pending");
+  try {
+    const response = await fetch("/.netlify/functions/sumup-checkout", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        amount: total,
+        currency: "EUR",
+        description: `Bar Kasse ${new Date().toLocaleString("de-DE")}`
+      })
+    });
+    const result = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(result.error || "SumUp konnte nicht gestartet werden.");
+
+    setSumupStatus("Betrag wurde an SumUp gesendet. Zahlung am Terminal abschließen.", "success");
+    const paid = window.confirm("Wurde die Zahlung am SumUp Solo erfolgreich abgeschlossen?");
+    if (paid) {
+      completeSale("sumup");
+      setSumupStatus("");
+    } else {
+      setSumupStatus("SumUp wurde gestartet, aber nicht gebucht. Bestellung bleibt im Warenkorb.", "pending");
+    }
+  } catch (error) {
+    setSumupStatus(`${error.message} Bitte notfalls manuell am SumUp kassieren.`, "error");
+  } finally {
+    renderOrder();
+  }
 }
 
 function recordDepositReturn(mode) {
@@ -932,6 +979,7 @@ function downloadCashbookCsv() {
 
 function paymentLabel(method) {
   if (method === "card") return "Karte";
+  if (method === "sumup") return "SumUp";
   if (method === "cash") return "Bar";
   if (method === "deposit-cash") return "Pfand Geld";
   if (method === "deposit-klopfer") return "Pfand Klopfer";
@@ -1278,6 +1326,7 @@ byId("clearOrder").addEventListener("click", () => {
   renderOrder();
 });
 byId("payCard").addEventListener("click", () => completeSale("card"));
+byId("paySumup").addEventListener("click", startSumupCheckout);
 byId("openCash").addEventListener("click", () => {
   renderCash();
   cashDialog.showModal();

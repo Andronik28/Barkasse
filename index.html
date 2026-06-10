@@ -7,13 +7,13 @@
     <title>Bar Kasse</title>
     <link rel="manifest" href="manifest.webmanifest" />
     <link rel="apple-touch-icon" href="icon.svg" />
-    <link rel="stylesheet" href="styles.css?v=31" />
+    <link rel="stylesheet" href="styles.css?v=32" />
   </head>
   <body>
     <div class="app-shell">
       <header class="topbar">
         <div class="brand-lockup">
-          <img class="club-logo" src="assets/burgfunken_logo.png?v=31" alt="Burgfunken Neuburg" />
+          <img class="club-logo" src="assets/burgfunken_logo.png?v=32" alt="Burgfunken Neuburg" />
           <div>
             <p class="eyebrow">Burgfunken Neuburg</p>
             <h1>Bar Kasse</h1>
@@ -74,10 +74,12 @@
           </div>
 
           <div class="payment-actions">
-            <button class="pay-button card" id="payCard" type="button">Mit Karte bezahlt</button>
+            <button class="pay-button sumup" id="paySumup" type="button">SumUp starten</button>
+            <button class="pay-button card" id="payCard" type="button">Manuell Karte</button>
             <button class="pay-button cash" id="openCash" type="button">Bar kassieren</button>
           </div>
 
+          <div class="sumup-status" id="sumupStatus" hidden></div>
           <div class="last-sale" id="lastSale" hidden></div>
         </aside>
       </main>
@@ -352,6 +354,6 @@
       </div>
     </dialog>
 
-    <script src="app.js?v=31"></script>
+    <script src="app.js?v=32"></script>
   </body>
 </html>
