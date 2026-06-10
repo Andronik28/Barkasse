@@ -1,4 +1,4 @@
-const APP_VERSION = "30";
+const APP_VERSION = "31";
 
 const defaultCatalog = {
   categories: [
@@ -47,6 +47,7 @@ const defaultCatalog = {
 
 const storageKeys = {
   catalog: "bar-kasse.catalog.v4",
+  cashbook: "bar-kasse.cashbook.v1",
   happyHour: "bar-kasse.happy-hour.v1",
   sales: "bar-kasse.sales.v1",
   shifts: "bar-kasse.shifts.v1",
@@ -75,6 +76,7 @@ const cashCounts = new Map();
 let depositReturnCount = 1;
 let catalog = loadCatalog();
 let sales = loadSales();
+let cashbook = loadCashbook();
 let shifts = loadShifts();
 let happyHourConfig = loadHappyHour();
 let activeCategory = catalog.categories[0]?.id || "";
@@ -118,6 +120,16 @@ function loadSales() {
     localStorage.removeItem(storageKeys.sales);
   }
   return [];
+}
+
+function loadCashbook() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(storageKeys.cashbook));
+    if (saved && typeof saved === "object" && !Array.isArray(saved)) return saved;
+  } catch {
+    localStorage.removeItem(storageKeys.cashbook);
+  }
+  return {};
 }
 
 function todayDateValue() {
@@ -188,6 +200,10 @@ function saveSales() {
   localStorage.setItem(storageKeys.sales, JSON.stringify(sales));
 }
 
+function saveCashbook() {
+  localStorage.setItem(storageKeys.cashbook, JSON.stringify(cashbook));
+}
+
 function saveShifts() {
   localStorage.setItem(storageKeys.shifts, JSON.stringify(shifts));
 }
@@ -202,6 +218,14 @@ function money(value) {
 
 function moneyShort(value) {
   return money(value).replace(",00", "");
+}
+
+function moneyCsv(value) {
+  return Number(value || 0).toFixed(2).replace(".", ",");
+}
+
+function readMoneyInput(input) {
+  return Math.max(0, Number(String(input.value || "0").replace(",", ".")) || 0);
 }
 
 function timeToMinutes(value) {
@@ -776,11 +800,55 @@ function getStats() {
   };
 }
 
+function saleDateKey(sale) {
+  return localDateValue(new Date(sale.createdAt));
+}
+
+function getCashbookRows() {
+  const dates = new Set([localDateValue(new Date()), ...Object.keys(cashbook)]);
+  sales.forEach((sale) => dates.add(saleDateKey(sale)));
+  return [...dates].sort().map((date) => {
+    const startCash = Number(cashbook[date]) || 0;
+    const cashMovement = sales
+      .filter((sale) => saleDateKey(sale) === date && ["cash", "deposit-cash"].includes(sale.method))
+      .reduce((sum, sale) => sum + sale.total, 0);
+    return {
+      date,
+      startCash,
+      cashMovement: Number(cashMovement.toFixed(2)),
+      expectedCash: Number((startCash + cashMovement).toFixed(2))
+    };
+  });
+}
+
+function getCashbookTotals(rows = getCashbookRows()) {
+  return rows.reduce((totals, row) => ({
+    startCash: totals.startCash + row.startCash,
+    cashMovement: totals.cashMovement + row.cashMovement,
+    expectedCash: totals.expectedCash + row.expectedCash
+  }), { startCash: 0, cashMovement: 0, expectedCash: 0 });
+}
+
 function renderStats() {
   const stats = getStats();
+  const cashbookRows = getCashbookRows();
+  const cashbookTotals = getCashbookTotals(cashbookRows);
   byId("statsRevenue").textContent = money(stats.revenue);
   byId("statsItems").textContent = String(stats.items);
   byId("statsOrders").textContent = String(stats.orders);
+  byId("cashbookDate").value = byId("cashbookDate").value || localDateValue(new Date());
+  byId("cashStartAmount").value = cashbook[byId("cashbookDate").value] ?? "";
+  byId("cashbookStartTotal").textContent = money(cashbookTotals.startCash);
+  byId("cashbookMovementTotal").textContent = money(cashbookTotals.cashMovement);
+  byId("cashbookExpectedTotal").textContent = money(cashbookTotals.expectedCash);
+  byId("cashbookRows").innerHTML = cashbookRows.map((row) => `
+    <tr>
+      <td>${new Date(`${row.date}T12:00:00`).toLocaleDateString("de-DE")}</td>
+      <td>${money(row.startCash)}</td>
+      <td>${money(row.cashMovement)}</td>
+      <td>${money(row.expectedCash)}</td>
+    </tr>
+  `).join("");
   byId("statsRows").innerHTML =
     stats.rows.map((row) => `
       <tr>
@@ -790,6 +858,23 @@ function renderStats() {
         <td>${money(row.revenue)}</td>
       </tr>
     `).join("") || `<tr><td colspan="4">Noch keine Verkäufe erfasst.</td></tr>`;
+}
+
+function saveCashbookStart() {
+  const date = byId("cashbookDate").value || localDateValue(new Date());
+  const amount = readMoneyInput(byId("cashStartAmount"));
+  if (amount > 0) {
+    cashbook[date] = Number(amount.toFixed(2));
+  } else {
+    delete cashbook[date];
+  }
+  saveCashbook();
+  renderStats();
+}
+
+function syncCashbookInput() {
+  const date = byId("cashbookDate").value || localDateValue(new Date());
+  byId("cashStartAmount").value = cashbook[date] ?? "";
 }
 
 function csvEscape(value) {
@@ -806,10 +891,10 @@ function downloadCsv() {
         line.productName,
         line.categoryName,
         line.quantity,
-        line.unitPrice.toFixed(2).replace(".", ","),
-        line.lineTotal.toFixed(2).replace(".", ","),
+        moneyCsv(line.unitPrice),
+        moneyCsv(line.lineTotal),
         line.priceNote || "",
-        sale.total.toFixed(2).replace(".", ",")
+        moneyCsv(sale.total)
       ]);
     });
   });
@@ -819,6 +904,28 @@ function downloadCsv() {
   const link = document.createElement("a");
   link.href = url;
   link.download = `bar-kasse-verkaeufe-${new Date().toISOString().slice(0, 10)}.csv`;
+  link.click();
+  URL.revokeObjectURL(url);
+}
+
+function downloadCashbookCsv() {
+  const rows = [["Datum", "Startgeld", "Barbewegung", "Soll-Kasse"]];
+  getCashbookRows().forEach((row) => {
+    rows.push([
+      new Date(`${row.date}T12:00:00`).toLocaleDateString("de-DE"),
+      moneyCsv(row.startCash),
+      moneyCsv(row.cashMovement),
+      moneyCsv(row.expectedCash)
+    ]);
+  });
+  const totals = getCashbookTotals();
+  rows.push(["Gesamt", moneyCsv(totals.startCash), moneyCsv(totals.cashMovement), moneyCsv(totals.expectedCash)]);
+  const csv = rows.map((row) => row.map(csvEscape).join(";")).join("\n");
+  const blob = new Blob([`\uFEFF${csv}`], { type: "text/csv;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = `bar-kasse-kassenbuch-${new Date().toISOString().slice(0, 10)}.csv`;
   link.click();
   URL.revokeObjectURL(url);
 }
@@ -1199,6 +1306,9 @@ byId("openStats").addEventListener("click", () => {
 });
 byId("closeStats").addEventListener("click", () => closeDialog(byId("statsDialog")));
 byId("downloadCsv").addEventListener("click", downloadCsv);
+byId("downloadCashbookCsv").addEventListener("click", downloadCashbookCsv);
+byId("cashbookDate").addEventListener("change", syncCashbookInput);
+byId("saveCashStart").addEventListener("click", saveCashbookStart);
 byId("togglePopular").addEventListener("click", () => {
   setPopularHidden(!document.body.classList.contains("popular-hidden"));
 });

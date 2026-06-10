@@ -955,6 +955,52 @@ dialog::backdrop {
   font-size: 1.7rem;
 }
 
+.cashbook-panel {
+  display: grid;
+  gap: 14px;
+  margin: 22px 0;
+}
+
+.cashbook-entry {
+  align-items: end;
+  display: grid;
+  gap: 10px;
+  grid-template-columns: minmax(145px, 1fr) minmax(145px, 1fr) auto;
+}
+
+.cashbook-entry label {
+  color: var(--muted);
+  display: grid;
+  font-size: 0.78rem;
+  font-weight: 900;
+  gap: 6px;
+  text-transform: uppercase;
+}
+
+.cashbook-entry input {
+  background: #fffdf8;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--ink);
+  font: inherit;
+  font-size: 1rem;
+  font-weight: 800;
+  min-height: 42px;
+  padding: 8px 10px;
+}
+
+.cashbook-kpis > div:nth-child(1) {
+  background: #eef5ff;
+}
+
+.cashbook-kpis > div:nth-child(2) {
+  background: #edf8f0;
+}
+
+.cashbook-kpis > div:nth-child(3) {
+  background: #fff3d8;
+}
+
 .stats-table-wrap {
   border: 1px solid var(--line);
   border-radius: 8px;
@@ -1472,6 +1518,7 @@ dialog::backdrop {
 
   .recipe-content,
   .cash-summary,
+  .cashbook-entry,
   .denomination-grid,
   .denomination-buttons,
   .cash-coins .denomination-buttons,

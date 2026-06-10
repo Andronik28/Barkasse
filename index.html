@@ -7,13 +7,13 @@
     <title>Bar Kasse</title>
     <link rel="manifest" href="manifest.webmanifest" />
     <link rel="apple-touch-icon" href="icon.svg" />
-    <link rel="stylesheet" href="styles.css?v=30" />
+    <link rel="stylesheet" href="styles.css?v=31" />
   </head>
   <body>
     <div class="app-shell">
       <header class="topbar">
         <div class="brand-lockup">
-          <img class="club-logo" src="assets/burgfunken_logo.png?v=30" alt="Burgfunken Neuburg" />
+          <img class="club-logo" src="assets/burgfunken_logo.png?v=31" alt="Burgfunken Neuburg" />
           <div>
             <p class="eyebrow">Burgfunken Neuburg</p>
             <h1>Bar Kasse</h1>
@@ -179,7 +179,10 @@
             <p class="eyebrow">Auswertung</p>
             <h2>Verkäufe</h2>
           </div>
-          <button class="pay-button card compact" id="downloadCsv" type="button">CSV herunterladen</button>
+          <div class="header-actions">
+            <button class="pay-button card compact" id="downloadCsv" type="button">Verkäufe CSV</button>
+            <button class="secondary-button compact" id="downloadCashbookCsv" type="button">Kassenbuch CSV</button>
+          </div>
         </div>
 
         <div class="stats-kpis">
@@ -196,6 +199,47 @@
             <strong id="statsOrders">0</strong>
           </div>
         </div>
+
+        <section class="cashbook-panel" aria-label="Kassenbuch">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Tagesabschluss</p>
+              <h3>Kassenbuch</h3>
+            </div>
+            <div class="cashbook-entry">
+              <label>Tag<input id="cashbookDate" type="date" /></label>
+              <label>Startgeld<input id="cashStartAmount" type="number" inputmode="decimal" min="0" step="0.01" placeholder="0,00" /></label>
+              <button class="secondary-button compact" id="saveCashStart" type="button">Speichern</button>
+            </div>
+          </div>
+          <div class="stats-kpis cashbook-kpis">
+            <div>
+              <span>Startgeld gesamt</span>
+              <strong id="cashbookStartTotal">0,00 €</strong>
+            </div>
+            <div>
+              <span>Barbewegung</span>
+              <strong id="cashbookMovementTotal">0,00 €</strong>
+            </div>
+            <div>
+              <span>Soll-Kasse</span>
+              <strong id="cashbookExpectedTotal">0,00 €</strong>
+            </div>
+          </div>
+          <div class="stats-table-wrap">
+            <table class="stats-table cashbook-table">
+              <thead>
+                <tr>
+                  <th>Datum</th>
+                  <th>Startgeld</th>
+                  <th>Barbewegung</th>
+                  <th>Soll-Kasse</th>
+                </tr>
+              </thead>
+              <tbody id="cashbookRows"></tbody>
+            </table>
+          </div>
+        </section>
 
         <div class="stats-table-wrap">
           <table class="stats-table">
@@ -308,6 +352,6 @@
       </div>
     </dialog>
 
-    <script src="app.js?v=30"></script>
+    <script src="app.js?v=31"></script>
   </body>
 </html>
