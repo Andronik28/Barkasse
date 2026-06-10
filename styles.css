@@ -773,11 +773,6 @@ h4 {
   color: #fff;
 }
 
-.pay-button.sumup {
-  background: #1f6f5f;
-  color: #fff;
-}
-
 .pay-button.cash {
   background: var(--warm);
   color: #fff;
@@ -793,33 +788,6 @@ h4 {
   color: #14532d;
   font-weight: 800;
   padding: 12px;
-}
-
-.sumup-status {
-  background: #eef5ff;
-  border: 1px solid #bad2f5;
-  border-radius: 8px;
-  color: #1d426f;
-  font-weight: 800;
-  padding: 12px;
-}
-
-.sumup-status.success {
-  background: #e7f4ea;
-  border-color: #b9dfc2;
-  color: #14532d;
-}
-
-.sumup-status.error {
-  background: #f8e2dd;
-  border-color: #e8b8ad;
-  color: #8e2618;
-}
-
-.sumup-status.pending {
-  background: #fff3d8;
-  border-color: #edd48e;
-  color: #6f4f12;
 }
 
 dialog {
