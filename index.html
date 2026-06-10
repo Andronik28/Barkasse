@@ -7,13 +7,13 @@
     <title>Bar Kasse</title>
     <link rel="manifest" href="manifest.webmanifest" />
     <link rel="apple-touch-icon" href="icon.svg" />
-    <link rel="stylesheet" href="styles.css?v=35" />
+    <link rel="stylesheet" href="styles.css?v=36" />
   </head>
   <body>
     <div class="app-shell">
       <header class="topbar">
         <div class="brand-lockup">
-          <img class="club-logo" src="assets/burgfunken_logo.png?v=35" alt="Burgfunken Neuburg" />
+          <img class="club-logo" src="assets/burgfunken_logo.png?v=36" alt="Burgfunken Neuburg" />
           <div>
             <p class="eyebrow">Burgfunken Neuburg</p>
             <h1>Bar Kasse</h1>
@@ -272,7 +272,9 @@
         <div class="settings-tabs" role="tablist" aria-label="Einstellungsbereiche">
           <button class="settings-tab" data-settings-tab="categories" type="button" role="tab" aria-selected="true">Kategorien</button>
           <button class="settings-tab" data-settings-tab="products" type="button" role="tab" aria-selected="false">Produkte</button>
+          <!-- Happy Hour ist fuer die aktuelle Veranstaltung deaktiviert.
           <button class="settings-tab" data-settings-tab="happyHour" type="button" role="tab" aria-selected="false">Happy Hour</button>
+          -->
           <button class="settings-tab" data-settings-tab="shifts" type="button" role="tab" aria-selected="false">Schicht</button>
           <button class="settings-tab" data-settings-tab="system" type="button" role="tab" aria-selected="false">System</button>
         </div>
@@ -300,6 +302,7 @@
             <div class="edit-list relaxed-list" id="drinkEditor"></div>
           </section>
 
+          <!-- Happy Hour ist fuer die aktuelle Veranstaltung deaktiviert.
           <section class="settings-block settings-panel" data-settings-panel="happyHour" hidden>
             <div class="settings-block-heading">
               <div>
@@ -310,6 +313,7 @@
             </div>
             <div class="happy-hour-editor" id="happyHourEditor"></div>
           </section>
+          -->
 
           <section class="settings-block settings-panel" data-settings-panel="shifts" hidden>
             <div class="settings-block-heading">
@@ -352,6 +356,6 @@
       </div>
     </dialog>
 
-    <script src="app.js?v=35"></script>
+    <script src="app.js?v=36"></script>
   </body>
 </html>

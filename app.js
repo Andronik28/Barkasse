@@ -1,4 +1,4 @@
-const APP_VERSION = "35";
+const APP_VERSION = "36";
 
 const defaultCatalog = {
   categories: [
@@ -234,12 +234,17 @@ function timeToMinutes(value) {
 }
 
 function isHappyHour(date = new Date()) {
+  // Happy Hour ist fuer die aktuelle Veranstaltung deaktiviert.
+  // Den restlichen Code bewusst behalten, damit die Funktion spaeter schnell wieder aktivierbar ist.
+  return false;
+  /*
   if (!happyHourConfig.enabled) return false;
   const now = date.getHours() * 60 + date.getMinutes();
   const start = timeToMinutes(happyHourConfig.start);
   const end = timeToMinutes(happyHourConfig.end);
   if (start === end) return false;
   return start < end ? now >= start && now < end : now >= start || now < end;
+  */
 }
 
 function hasHappyHourPrice(drink, date = new Date()) {
@@ -941,7 +946,8 @@ function paymentLabel(method) {
 function renderSettings() {
   renderCategoryEditor();
   renderDrinkEditor();
-  renderHappyHourEditor();
+  // Happy Hour ist fuer die aktuelle Veranstaltung deaktiviert.
+  // renderHappyHourEditor();
   renderShiftEditor();
 }
 
@@ -1254,6 +1260,8 @@ function updateClock() {
   clock.innerHTML = `<span>${hour}</span><span class="clock-colon">:</span><span>${minute}</span>`;
   renderShiftStatus();
   maybeShowStopWarning();
+  /*
+  Happy Hour ist fuer die aktuelle Veranstaltung deaktiviert.
   const nextHappyHourActive = isHappyHour();
   if (nextHappyHourActive !== happyHourActive) {
     happyHourActive = nextHappyHourActive;
@@ -1262,6 +1270,7 @@ function updateClock() {
     renderOrder();
     renderCash();
   }
+  */
 }
 
 function registerServiceWorker() {
@@ -1325,8 +1334,9 @@ byId("resetDemoData").addEventListener("click", resetDemoData);
 byId("clearSales").addEventListener("click", clearSales);
 byId("categoryEditor").addEventListener("click", handleSettingsClick);
 byId("drinkEditor").addEventListener("click", handleSettingsClick);
-byId("happyHourEditor").addEventListener("click", handleSettingsClick);
-document.querySelector('[data-action="save-happy-hour"]').addEventListener("click", handleSettingsClick);
+// Happy Hour ist fuer die aktuelle Veranstaltung deaktiviert.
+// byId("happyHourEditor").addEventListener("click", handleSettingsClick);
+// document.querySelector('[data-action="save-happy-hour"]').addEventListener("click", handleSettingsClick);
 byId("shiftEditor").addEventListener("click", handleSettingsClick);
 document.querySelectorAll("[data-settings-tab]").forEach((tab) => {
   tab.addEventListener("click", () => showSettingsTab(tab.dataset.settingsTab));
