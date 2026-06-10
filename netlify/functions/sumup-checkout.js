@@ -13,6 +13,7 @@ exports.handler = async (event) => {
   const merchantCode = process.env.SUMUP_MERCHANT_CODE;
   const readerId = process.env.SUMUP_READER_ID;
   const affiliateKey = process.env.SUMUP_AFFILIATE_KEY;
+  const affiliateAppId = process.env.SUMUP_AFFILIATE_APP_ID || "de.burgfunken.barkasse";
 
   if (!apiKey || !merchantCode || !readerId || !affiliateKey) {
     return json(500, { error: "SumUp ist noch nicht vollständig konfiguriert." });
@@ -36,7 +37,10 @@ exports.handler = async (event) => {
       minor_unit: 2,
       value: Math.round(amount * 100)
     },
-    affiliate: affiliateKey,
+    affiliate: {
+      app_id: affiliateAppId,
+      key: affiliateKey
+    },
     description: String(payload.description || "Bar Kasse").slice(0, 120)
   };
 

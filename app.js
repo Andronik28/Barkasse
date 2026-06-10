@@ -1,4 +1,4 @@
-const APP_VERSION = "32";
+const APP_VERSION = "33";
 
 const defaultCatalog = {
   categories: [
