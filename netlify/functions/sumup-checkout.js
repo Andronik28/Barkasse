@@ -1,3 +1,5 @@
+const { randomUUID } = require("node:crypto");
+
 const json = (statusCode, body) => ({
   statusCode,
   headers: { "Content-Type": "application/json" },
@@ -39,6 +41,7 @@ exports.handler = async (event) => {
     },
     affiliate: {
       app_id: affiliateAppId,
+      foreign_transaction_id: randomUUID(),
       key: affiliateKey
     },
     description: String(payload.description || "Bar Kasse").slice(0, 120)
@@ -56,7 +59,7 @@ exports.handler = async (event) => {
   const result = await response.json().catch(() => ({}));
   if (!response.ok) {
     return json(response.status, {
-      error: result.message || result.error || "SumUp Checkout konnte nicht gestartet werden.",
+      error: result.detail || result.message || result.error || result.title || "SumUp Checkout konnte nicht gestartet werden.",
       details: result
     });
   }

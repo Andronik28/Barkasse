@@ -1,4 +1,4 @@
-const APP_VERSION = "33";
+const APP_VERSION = "34";
 
 const defaultCatalog = {
   categories: [
@@ -584,7 +584,10 @@ async function startSumupCheckout() {
       })
     });
     const result = await response.json().catch(() => ({}));
-    if (!response.ok) throw new Error(result.error || "SumUp konnte nicht gestartet werden.");
+    if (!response.ok) {
+      const detail = result.details?.detail || result.details?.title || result.error;
+      throw new Error(detail || "SumUp konnte nicht gestartet werden.");
+    }
 
     setSumupStatus("Betrag wurde an SumUp gesendet. Zahlung am Terminal abschließen.", "success");
     const paid = window.confirm("Wurde die Zahlung am SumUp Solo erfolgreich abgeschlossen?");
@@ -647,9 +650,9 @@ function completeSale(method, received = null, change = null) {
   closeDialog(cashDialog);
   lastSale.hidden = false;
   lastSale.textContent =
-    method === "card"
-      ? `Letzte Zahlung: ${count} Artikel, ${money(total)}, mit Karte bezahlt.`
-      : `Letzte Zahlung: ${count} Artikel, ${money(total)}, bar erhalten ${money(received)}, Rückgeld ${money(change)}.`;
+    method === "cash"
+      ? `Letzte Zahlung: ${count} Artikel, ${money(total)}, bar erhalten ${money(received)}, Rückgeld ${money(change)}.`
+      : `Letzte Zahlung: ${count} Artikel, ${money(total)}, mit ${paymentLabel(method)} bezahlt.`;
 }
 
 function showRecipe(drink) {

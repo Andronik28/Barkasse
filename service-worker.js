@@ -1,12 +1,12 @@
-const CACHE_NAME = "bar-kasse-offline-v33";
+const CACHE_NAME = "bar-kasse-offline-v34";
 const APP_FILES = [
   "./",
   "./index.html",
-  "./styles.css?v=33",
-  "./app.js?v=33",
+  "./styles.css?v=34",
+  "./app.js?v=34",
   "./manifest.webmanifest",
   "./icon.svg",
-  "./assets/burgfunken_logo.png?v=33"
+  "./assets/burgfunken_logo.png?v=34"
 ];
 
 self.addEventListener("install", (event) => {
