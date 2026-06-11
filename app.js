@@ -1,4 +1,4 @@
-const APP_VERSION = "36";
+const APP_VERSION = "37";
 
 const defaultCatalog = {
   categories: [
@@ -50,7 +50,7 @@ const storageKeys = {
   cashbook: "bar-kasse.cashbook.v1",
   happyHour: "bar-kasse.happy-hour.v1",
   sales: "bar-kasse.sales.v1",
-  shifts: "bar-kasse.shifts.v1",
+  shifts: "bar-kasse.shifts.v2",
   popularHidden: "bar-kasse.popular-hidden.v1",
   stopAck: "bar-kasse.stop-ack.v1"
 };
@@ -150,19 +150,78 @@ function localTimeValue(date) {
 }
 
 function defaultShifts() {
-  const now = new Date();
-  const startsAt = new Date(now.getTime() - 60 * 60000);
-  const endsAt = new Date(now.getTime() + 5 * 60 * 60000);
-  const stopAt = new Date(endsAt.getTime() - 30 * 60000);
   return [
     {
-      id: "demo-shift",
-      name: "Abendschicht",
-      date: localDateValue(startsAt),
-      start: localTimeValue(startsAt),
-      end: localTimeValue(endsAt),
-      stop: localTimeValue(stopAt),
-      people: ["Mia", "Noah", "Lea"]
+      id: "bar-2026-06-12-1",
+      name: "Bar Freitag Schicht 1",
+      date: "2026-06-12",
+      start: "18:00",
+      end: "21:30",
+      stop: "21:00",
+      people: ["Sylvia K.", "Andrea W.", "Fabi", "Titzi", "Martin H."]
+    },
+    {
+      id: "bar-2026-06-12-2",
+      name: "Bar Freitag Schicht 2",
+      date: "2026-06-12",
+      start: "21:30",
+      end: "01:00",
+      stop: "00:30",
+      people: ["Gabi Kaps", "Nico", "Michi B.", "Elke", "Tanja E.", "Selina (Springer)", "Jonas (Springer)"]
+    },
+    {
+      id: "bar-2026-06-13-1",
+      name: "Bar Samstag Schicht 1",
+      date: "2026-06-13",
+      start: "14:30",
+      end: "18:00",
+      stop: "17:30",
+      people: ["Mate", "Michi", "Joshi", "Nico", "Elke"]
+    },
+    {
+      id: "bar-2026-06-13-2",
+      name: "Bar Samstag Schicht 2",
+      date: "2026-06-13",
+      start: "18:00",
+      end: "21:30",
+      stop: "21:00",
+      people: ["Klara Burpich", "Giovanni", "Elisa", "Nicole", "Claudia Hotze"]
+    },
+    {
+      id: "bar-2026-06-13-3",
+      name: "Bar Samstag Schicht 3",
+      date: "2026-06-13",
+      start: "21:30",
+      end: "01:00",
+      stop: "00:30",
+      people: ["Titzi", "Fabi", "Simi", "Sandy", "Jonas", "Selina"]
+    },
+    {
+      id: "bar-2026-06-14-1",
+      name: "Bar Sonntag Schicht 1",
+      date: "2026-06-14",
+      start: "11:00",
+      end: "15:00",
+      stop: "14:30",
+      people: ["Werner", "Huffi", "Rosa", "Erwin", "Celine B."]
+    },
+    {
+      id: "bar-2026-06-14-2",
+      name: "Bar Sonntag Schicht 2",
+      date: "2026-06-14",
+      start: "15:00",
+      end: "19:00",
+      stop: "18:30",
+      people: ["Madita", "Sabrina", "Simi", "Sandy", "Andronik"]
+    },
+    {
+      id: "bar-2026-06-14-3",
+      name: "Bar Sonntag Schicht 3",
+      date: "2026-06-14",
+      start: "19:00",
+      end: "22:00",
+      stop: "21:30",
+      people: ["Michi B.", "Gabi Kaps", "Elke", "Sandy", "Jonas", "Selina"]
     }
   ];
 }
