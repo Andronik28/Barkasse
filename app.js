@@ -1,4 +1,4 @@
-const APP_VERSION = "37";
+const APP_VERSION = "38";
 
 const defaultCatalog = {
   categories: [
@@ -519,6 +519,10 @@ function addDrink(id) {
   if (!drink) return;
   const existing = order.get(id);
   order.set(id, { drink, quantity: existing ? existing.quantity + 1 : 1 });
+  if (id === "klopfer") {
+    renderOrder();
+    return;
+  }
   const deposit = order.get(depositProduct.id);
   order.set(depositProduct.id, {
     drink: depositProduct,
